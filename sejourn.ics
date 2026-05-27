@@ -8,8 +8,8 @@ X-WR-TIMEZONE:Europe/Brussels
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
-UID:2026-05-28-1085235200@sejourn-eu
-DTSTAMP:20260527T232624Z
+UID:2026-05-28-5007494166@sejourn-eu
+DTSTAMP:20260527T233514Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
@@ -25,5 +25,41 @@ TRIGGER:-PT1H
 ACTION:DISPLAY
 DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in 
 END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-26-4819327079@sejourn-eu
+DTSTAMP:20260527T233514Z
+DTSTART;VALUE=DATE:20260526
+DTEND;VALUE=DATE:20260526
+SUMMARY:Executive Vice-President Séjourné participates in roundtable with Mr Peter Burke Minister for Enterprise \, Tourism and Employment of Ireland together with Irish Business Associations
+LOCATION:Dublin\, Ireland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-26-75742965@sejourn-eu
+DTSTAMP:20260527T233514Z
+DTSTART;VALUE=DATE:20260526
+DTEND;VALUE=DATE:20260526
+SUMMARY:Executive Vice-President Séjourné meets Mr Peter Burke\, Minister for Enterprise\, Tourism and Employment of  Ireland
+LOCATION:Dublin\, Ireland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-26-3243218921@sejourn-eu
+DTSTAMP:20260527T233514Z
+DTSTART;VALUE=DATE:20260526
+DTEND;VALUE=DATE:20260526
+SUMMARY:Executive Vice-President Séjourné meets Ms Helen McEntee\, Minister for Defence\, Foreign Affairs and Trade
+LOCATION:Dublin\, Ireland
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-21-8278318665@sejourn-eu
+DTSTAMP:20260527T233514Z
+DTSTART;VALUE=DATE:20260521
+DTEND;VALUE=DATE:20260521
+SUMMARY:Executive Vice-President Séjourné participates in working dinner with French Association of Large Companies (AFEP) Board
+LOCATION:Paris\, France
+STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR
