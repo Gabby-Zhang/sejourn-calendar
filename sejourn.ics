@@ -1,0 +1,314 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Sejourn EU Commission Calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Sejourn - EU Commission
+X-WR-TIMEZONE:Europe/Brussels
+REFRESH-INTERVAL;VALUE=DURATION:PT1H
+X-PUBLISHED-TTL:PT1H
+BEGIN:VEVENT
+UID:2026-05-28-1027206888@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Hansen meets with Mr Sarun Charoensuwan\, Vice Minister of Foreign Affairs of Thailand
+LOCATION:Bangkok\, Thailand
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Hansen meets with Mr Sarun Charoensuw
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Hansen meets with Mr Sarun Charoensuw
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-1349644386@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Hansen meets with the Thai Chamber of Commerce
+LOCATION:Bangkok\, Thailand
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Hansen meets with the Thai Chamber of
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Hansen meets with the Thai Chamber of
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-8477906803@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Kubilius participates in the signature ceremony for Agreement on SAFE instrument
+LOCATION:Brussels\, Belgium
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Kubilius participates in the signatur
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Kubilius participates in the signatur
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-1977544699@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Várhelyi visits the Florence site of Menarini Industrie Farmaceutiche Riunite
+LOCATION:Florence\, Italy
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Várhelyi visits the Florence site of 
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Várhelyi visits the Florence site of 
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-4614513408@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:High Representative Vice President Kallas co-chairs Informal meeting of the EU foreign affairs ministers - Gymnich
+LOCATION:Lemesos\, Cyprus
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: High Representative Vice President Kallas co-chair
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: High Representative Vice President Kallas co-chair
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-1181235522@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Hansen meets with Mr. Watcharaphon Khaokham\, Deputy Minister of Agriculture and Cooperatives
+LOCATION:Bangkok\, Thailand
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Hansen meets with Mr. Watcharaphon Kh
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Hansen meets with Mr. Watcharaphon Kh
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-2644891175@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Hansen delivers an opening speech at the THAIFEX Business Forum
+LOCATION:Bangkok\, Thailand
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Hansen delivers an opening speech at 
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Hansen delivers an opening speech at 
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-5486287630@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Hansen meets with Mr Yodchanan Wongsawat\, Deputy Prime Minister and Minister of Higher Education\, Science\, Research and Innovation of Thailand
+LOCATION:Bangkok\, Thailand
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Hansen meets with Mr Yodchanan Wongsa
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Hansen meets with Mr Yodchanan Wongsa
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-9875802024@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Executive Vice-President Mînzatu participates in the Everything HR 2026 Conference
+LOCATION:Brussels\, Belgium
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Executive Vice-President Mînzatu participates in t
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Executive Vice-President Mînzatu participates in t
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-5153076048@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
+LOCATION:Brussels\, Belgium
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Executive Vice-President Séjourné participates in 
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in 
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-5873026934@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Kubilius chairs the second High Level discussion on the future of the European defence
+LOCATION:Brussels\, Belgium
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Kubilius chairs the second High Level
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Kubilius chairs the second High Level
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-1537166244@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Executive Vice-President Fitto participates in the annual event on Italy’s Recovery and Resilience Plan
+LOCATION:Milan\, Italy
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Executive Vice-President Fitto participates in the
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Executive Vice-President Fitto participates in the
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-3137486256@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Šuica attends the International Conference of Balkan and Black Sea Regions via video-message
+LOCATION:Patras\, Greece
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Šuica attends the International Confe
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Šuica attends the International Confe
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-2909998714@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Šuica participates in the EPP European Democrat Students event via video-message
+LOCATION:Zagreb\, Croatia
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Šuica participates in the EPP Europea
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Šuica participates in the EPP Europea
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-7190544076@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Šuica meets with Ms Marilena Raouna\, Deputy Minister for European Affairs of Cyprus
+LOCATION:Limassol\, Cyprus
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Šuica meets with Ms Marilena Raouna\,
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Šuica meets with Ms Marilena Raouna\,
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-05-28-9008476155@sejourn-eu
+DTSTAMP:20260527T231234Z
+DTSTART;VALUE=DATE:20260528
+DTEND;VALUE=DATE:20260528
+SUMMARY:Commissioner Lahbib participates in the Enabel (Belgian agency for international cooperation) International conference "Education in Times of Turmoil"
+LOCATION:Brussels\, Belgium
+STATUS:CONFIRMED
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Tomorrow: Commissioner Lahbib participates in the Enabel (Be
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-PT1H
+ACTION:DISPLAY
+DESCRIPTION:In 1 hour: Commissioner Lahbib participates in the Enabel (Be
+END:VALARM
+END:VEVENT
+END:VCALENDAR
