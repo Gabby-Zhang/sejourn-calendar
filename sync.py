@@ -98,25 +98,47 @@ def parse_events(soup: BeautifulSoup) -> list:
     return events
 
 
+def event_key_scrape(ev: dict) -> str:
+    return f"{ev['date']}|{ev['title']}"
+
+
 def scrape_events() -> list:
     cutoff = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
     print(f"Fetching events from {cutoff} onward…")
     all_events = []
-    for page in range(50):
+    seen_keys = set()
+
+    for page in range(20):  # cap at 20 pages (~400 events max)
         if page > 0:
-            time.sleep(0.4)
+            time.sleep(0.6)
         try:
             soup = fetch_page(page)
         except requests.RequestException as e:
             print(f"Warning: page {page + 1} failed – {e}")
             break
+
         batch = parse_events(soup)
         if not batch:
             break
-        in_window = [e for e in batch if e["date"] >= cutoff]
-        all_events.extend(in_window)
-        if len(in_window) < len(batch):
+
+        # Only keep events within the date window and not already seen
+        new_on_page = []
+        oldest_date = None
+        for ev in batch:
+            oldest_date = ev["date"]  # batch is in descending date order
+            k = event_key_scrape(ev)
+            if ev["date"] >= cutoff and k not in seen_keys:
+                seen_keys.add(k)
+                new_on_page.append(ev)
+
+        all_events.extend(new_on_page)
+
+        # Stop if we've gone past the cutoff date or found no new events
+        if oldest_date and oldest_date < cutoff:
             break
+        if not new_on_page:
+            break
+
     print(f"Found {len(all_events)} events.")
     return all_events
 
