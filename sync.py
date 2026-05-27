@@ -16,13 +16,14 @@ from bs4 import BeautifulSoup
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 
-# All commissioners calendar — we filter for Séjourné client-side
-# (server-side filter is unreliable from cloud IPs)
+# Séjourné-filtered URL (server-side) + client-side "journ" check as fallback
 BASE_URL = (
     "https://commission.europa.eu/about/organisation/college-commissioners"
     "/calendar-items-president-and-commissioners_en"
-    "?f%5B0%5D=ewcms_calendar_status%3Apast"
-    "&f%5B1%5D=ewcms_calendar_status%3Aupcoming"
+    "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic%3A"
+    "http%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D"
+    "&f%5B1%5D=ewcms_calendar_status%3Apast"
+    "&f%5B2%5D=ewcms_calendar_status%3Aupcoming"
 )
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
@@ -36,7 +37,9 @@ HEADERS = {
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
         "Chrome/120.0.0.0 Safari/537.36"
-    )
+    ),
+    "Cache-Control": "no-cache, no-store",
+    "Pragma": "no-cache",
 }
 
 MONTH_MAP = {
