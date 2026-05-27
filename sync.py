@@ -16,15 +16,15 @@ from bs4 import BeautifulSoup
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 
+# Full URL with properly encoded filters for Séjourné only
+# (square brackets must be %5B/%5D for Drupal to apply the filter)
 BASE_URL = (
     "https://commission.europa.eu/about/organisation/college-commissioners"
     "/calendar-items-president-and-commissioners_en"
-)
-FILTER_QUERY = (
-    "f[0]=commissioner_dynamic_commissioner_dynamic:"
-    "http://publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D"
-    "&f[1]=ewcms_calendar_status:past"
-    "&f[2]=ewcms_calendar_status:upcoming"
+    "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic%3A"
+    "http%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D"
+    "&f%5B1%5D=ewcms_calendar_status%3Apast"
+    "&f%5B2%5D=ewcms_calendar_status%3Aupcoming"
 )
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
@@ -49,7 +49,7 @@ MONTH_MAP = {
 # ── Scraper ────────────────────────────────────────────────────────────────────
 
 def fetch_page(page: int) -> BeautifulSoup:
-    url = f"{BASE_URL}?{FILTER_QUERY}&page={page}"
+    url = f"{BASE_URL}&page={page}"
     resp = requests.get(url, headers=HEADERS, timeout=30)
     resp.raise_for_status()
     return BeautifulSoup(resp.text, "html.parser")
