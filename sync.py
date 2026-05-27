@@ -102,13 +102,37 @@ def event_key_scrape(ev: dict) -> str:
     return f"{ev['date']}|{ev['title']}"
 
 
+def parse_all_events(soup: BeautifulSoup) -> list:
+    """Parse ALL commissioner events (no name filter) — used for date-based stopping."""
+    events = []
+    for article in soup.select("article.ecl-content-item--inline"):
+        time_el = article.select_one("time.ecl-content-item__date")
+        if not time_el:
+            continue
+        day   = time_el.select_one(".ecl-date-block__day")
+        month = time_el.select_one(".ecl-date-block__month")
+        year  = time_el.select_one(".ecl-date-block__year")
+        if not (day and month and year):
+            continue
+        try:
+            event_date = date(
+                int(year.get_text(strip=True)),
+                MONTH_MAP[month.get_text(strip=True)],
+                int(day.get_text(strip=True)),
+            )
+            events.append(event_date.isoformat())
+        except (KeyError, ValueError):
+            continue
+    return events
+
+
 def scrape_events() -> list:
     cutoff = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
     print(f"Fetching events from {cutoff} onward…")
     all_events = []
-    seen_keys = set()
+    seen_keys  = set()
 
-    for page in range(20):  # cap at 20 pages (~400 events max)
+    for page in range(20):  # cap at 20 pages
         if page > 0:
             time.sleep(0.6)
         try:
@@ -117,26 +141,21 @@ def scrape_events() -> list:
             print(f"Warning: page {page + 1} failed – {e}")
             break
 
-        batch = parse_events(soup)
-        if not batch:
+        # Get dates of ALL events on this page (to know when to stop)
+        all_dates = parse_all_events(soup)
+        if not all_dates:
             break
 
-        # Only keep events within the date window and not already seen
-        new_on_page = []
-        oldest_date = None
-        for ev in batch:
-            oldest_date = ev["date"]  # batch is in descending date order
+        # Get Séjourné-filtered events
+        sejourn_batch = parse_events(soup)
+        for ev in sejourn_batch:
             k = event_key_scrape(ev)
             if ev["date"] >= cutoff and k not in seen_keys:
                 seen_keys.add(k)
-                new_on_page.append(ev)
+                all_events.append(ev)
 
-        all_events.extend(new_on_page)
-
-        # Stop if we've gone past the cutoff date or found no new events
-        if oldest_date and oldest_date < cutoff:
-            break
-        if not new_on_page:
+        # Stop when the oldest event on this page is before our cutoff
+        if min(all_dates) < cutoff:
             break
 
     print(f"Found {len(all_events)} events.")
