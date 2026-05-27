@@ -16,15 +16,13 @@ from bs4 import BeautifulSoup
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 
-# Full URL with properly encoded filters for Séjourné only
-# (square brackets must be %5B/%5D for Drupal to apply the filter)
+# All commissioners calendar — we filter for Séjourné client-side
+# (server-side filter is unreliable from cloud IPs)
 BASE_URL = (
     "https://commission.europa.eu/about/organisation/college-commissioners"
     "/calendar-items-president-and-commissioners_en"
-    "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic%3A"
-    "http%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D"
-    "&f%5B1%5D=ewcms_calendar_status%3Apast"
-    "&f%5B2%5D=ewcms_calendar_status%3Aupcoming"
+    "?f%5B0%5D=ewcms_calendar_status%3Apast"
+    "&f%5B1%5D=ewcms_calendar_status%3Aupcoming"
 )
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
@@ -85,8 +83,14 @@ def parse_events(soup: BeautifulSoup) -> list:
 
         title_el    = article.select_one(".ecl-content-block__title")
         location_el = article.select_one(".ecl-content-block__secondary-meta-label")
+        title = title_el.get_text(strip=True) if title_el else ""
+
+        # Client-side filter: only keep Séjourné's events
+        if "journ" not in title.lower():
+            continue
+
         events.append({
-            "title":    (title_el.get_text(strip=True) if title_el else "No title"),
+            "title":    title,
             "date":     event_date.isoformat(),
             "location": (location_el.get_text(strip=True) if location_el else ""),
             "status":   status,
