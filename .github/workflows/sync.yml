@@ -1,0 +1,37 @@
+name: Sync Séjourné Calendar
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # every hour
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run sync
+        run: python sync.py
+        env:
+          NTFY_TOPIC: ss-calendar-update
+
+      - name: Commit updated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sejourn.ics sync_state.json
+          git diff --staged --quiet || git commit -m "chore: update calendar $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
