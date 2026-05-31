@@ -8,8 +8,8 @@ X-WR-TIMEZONE:Europe/Brussels
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
-UID:2026-06-01-3237080878@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-06-01-9011958452@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné meets Mr Wasserman Sylvain\, President of  French Environment and Energy Management Agency (ADEME)
@@ -27,8 +27,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné meets Mr Wasserm
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-4326194092@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-28-5384346133@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
@@ -36,8 +36,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-3278142139@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-28-4862143881@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Michał Baranowski\, Undersecretary of State at the Ministry of Economic Development and Technology of Poland
@@ -45,8 +45,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-61953903@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-28-4566256581@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Sakari Rainer Puisto\, Minister of Economic Affairs of Finland
@@ -54,8 +54,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-5211306154@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-26-6767612028@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné participates in roundtable with Mr Peter Burke Minister for Enterprise \, Tourism and Employment of Ireland together with Irish Business Associations
@@ -63,8 +63,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-1734029997@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-26-1785596556@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Mr Peter Burke\, Minister for Enterprise\, Tourism and Employment of  Ireland
@@ -72,8 +72,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-5102277641@sejourn-eu
-DTSTAMP:20260531T223950Z
+UID:2026-05-26-3056289013@sejourn-eu
+DTSTAMP:20260531T230650Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Ms Helen McEntee\, Minister for Defence\, Foreign Affairs and Trade
