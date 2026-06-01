@@ -8,8 +8,8 @@ X-WR-TIMEZONE:Europe/Brussels
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
-UID:2026-06-05-7465281326@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-05-1825273754@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260605
 DTEND;VALUE=DATE:20260605
 SUMMARY:Executive Vice-President Séjourné meets Mr Jean-François Fallacher  Chef Executive Officer of EUTELSAT
@@ -27,8 +27,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné meets Mr Jean-Fr
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-02-6795200804@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-02-2788131280@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in audition with three  Parliamentary Committee on Industrial  Accelerator Act
@@ -46,8 +46,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-02-6762458977@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-02-5887158994@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in Audition with European Parliament Committee on the Internal Market and Consumer Protection
@@ -65,8 +65,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-1502962400@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-377711343@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Kubilius delivers speech at the NATO Parliamentary Assembly session
@@ -84,8 +84,8 @@ DESCRIPTION:In 1 hour: Commissioner Kubilius delivers speech at the NATO
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-8334303896@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-1189841232@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:High Representative Vice President Kallas visits Pakistan and will hold the EU-Pakistan Strategic Dialogue and meet with the leadership of the country
@@ -103,8 +103,8 @@ DESCRIPTION:In 1 hour: High Representative Vice President Kallas visits P
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-6113108201@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-2985327832@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Dombrovskis participates in the “reVision of Czechia” conference by “Second Economic Transformation”
@@ -122,8 +122,8 @@ DESCRIPTION:In 1 hour: Commissioner Dombrovskis participates in the “reVi
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-9986151531@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-5868172406@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Kubilius participates in the roundtable with Cassini Business Accelerator space scaleup companies
@@ -141,8 +141,8 @@ DESCRIPTION:In 1 hour: Commissioner Kubilius participates in the roundtab
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-7175077003@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-7228045695@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Kubilius delivers speech at the European Business Angel Network (EBAN) Congress
@@ -160,8 +160,8 @@ DESCRIPTION:In 1 hour: Commissioner Kubilius delivers speech at the Europ
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-9564707614@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-8873602680@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Dombrovskis visits the Novel Radiation Tolerant Microelectronic Technology (IPCEI)
@@ -179,8 +179,8 @@ DESCRIPTION:In 1 hour: Commissioner Dombrovskis visits the Novel Radiatio
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-8579127730@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-9738294422@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Dombrovskis meets with Mr Petr Pavel\, President of Czechia
@@ -198,8 +198,8 @@ DESCRIPTION:In 1 hour: Commissioner Dombrovskis meets with Mr Petr Pavel\
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-6711060187@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-9360434149@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Kubilius delivers speech at the NATO-Ukraine Innovation Forum
@@ -217,8 +217,8 @@ DESCRIPTION:In 1 hour: Commissioner Kubilius delivers speech at the NATO-
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-4415696222@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-7942700573@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Dombrovskis meets with Mr Andrej Babiš\, Prime Minister of Czechia\, Mr Karel Havlíček\, First Deputy Prime Minister and Minister of Industry and Trade and Mrs Alena Schillerová\, Minister of Finance of the Czech Republic
@@ -236,8 +236,8 @@ DESCRIPTION:In 1 hour: Commissioner Dombrovskis meets with Mr Andrej Babi
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-5867947585@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-5191764665@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Hansen visits the Lantmännen Biorefineries
@@ -255,8 +255,8 @@ DESCRIPTION:In 1 hour: Commissioner Hansen visits the Lantmännen Biorefin
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-1306785942@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-6542741117@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Hansen visits the Braviken sawmill
@@ -274,8 +274,8 @@ DESCRIPTION:In 1 hour: Commissioner Hansen visits the Braviken sawmill
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-6477104795@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-7922008881@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Tzitzikostas delivers a Keynote Speech at the International Shipping Exhibition ''Posidonia 2026''
@@ -293,8 +293,8 @@ DESCRIPTION:In 1 hour: Commissioner Tzitzikostas delivers a Keynote Speec
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-7823238779@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-2134100443@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Síkela meets with Mr Ivan Bednarik\, Minister for Transport of Czech Republic
@@ -312,8 +312,8 @@ DESCRIPTION:In 1 hour: Commissioner Síkela meets with Mr Ivan Bednarik\,
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-3307682355@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-614029468@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Síkela delivers an opening speech at the African Smart Mobility Forum
@@ -331,8 +331,8 @@ DESCRIPTION:In 1 hour: Commissioner Síkela delivers an opening speech at
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-1514068997@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-5566856843@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné meets Mr Alain Di Crescenzo\, President of CCI France  (French Chambers of Commerce and Industry)
@@ -350,8 +350,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné meets Mr Alain D
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-2306361671@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-4513566154@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné participates in Choose France Forum
@@ -369,8 +369,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-9854840045@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-4408831217@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Šefčovič receives Mr Eelco Eerenberg\, Minister for Tax Affairs\, Tax Administration and Customs of the Netherlands
@@ -388,8 +388,8 @@ DESCRIPTION:In 1 hour: Commissioner Šefčovič receives Mr Eelco Eerenberg\
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-3898196053@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-3114038795@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Šefčovič receives Mr Yeo Han-koo\, Minister of Trade of the Republic of Korea
@@ -407,8 +407,8 @@ DESCRIPTION:In 1 hour: Commissioner Šefčovič receives Mr Yeo Han-koo\, Mi
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-5515265112@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-4976004068@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Commissioner Šefčovič receives Mr Matthias Diependaele\, Minister-President of Flanders
@@ -426,8 +426,8 @@ DESCRIPTION:In 1 hour: Commissioner Šefčovič receives Mr Matthias Diepend
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-5477776853@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-06-01-6232420023@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Virkkunen visits the MRS3 Data Centre
@@ -445,8 +445,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Virkkunen visits the MRS3
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-6483776053@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-28-5500720346@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
@@ -454,8 +454,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-561739544@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-28-8482766119@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Michał Baranowski\, Undersecretary of State at the Ministry of Economic Development and Technology of Poland
@@ -463,8 +463,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-9100089850@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-28-2005849271@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Sakari Rainer Puisto\, Minister of Economic Affairs of Finland
@@ -472,8 +472,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-2386019149@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-26-2993333263@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné participates in roundtable with Mr Peter Burke Minister for Enterprise \, Tourism and Employment of Ireland together with Irish Business Associations
@@ -481,8 +481,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-4845371789@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-26-3937842804@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Mr Peter Burke\, Minister for Enterprise\, Tourism and Employment of  Ireland
@@ -490,8 +490,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-4711047085@sejourn-eu
-DTSTAMP:20260601T214127Z
+UID:2026-05-26-1426145765@sejourn-eu
+DTSTAMP:20260601T214521Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Ms Helen McEntee\, Minister for Defence\, Foreign Affairs and Trade
