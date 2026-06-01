@@ -151,7 +151,7 @@ def scrape_from_ics() -> list:
         print("[ICS] sejourn.ics not found, skipping.")
         return []
 
-    cutoff = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+    # 历史行程全部保留，不设截止日期（仅网站抓取才限制窗口）
     today  = date.today().isoformat()
     events = []
 
@@ -174,8 +174,7 @@ def scrape_from_ics() -> list:
             continue
 
         event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
-        if event_date < cutoff:
-            continue
+        # 不再丢弃旧事件，历史行程永久保留
 
         status = ("upcoming" if event_date > today
                   else "ongoing" if event_date == today
