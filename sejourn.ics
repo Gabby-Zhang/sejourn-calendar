@@ -8,8 +8,8 @@ X-WR-TIMEZONE:Europe/Brussels
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
-UID:2026-06-05-2771526318@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-06-05-6898226269@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260605
 DTEND;VALUE=DATE:20260605
 SUMMARY:Executive Vice-President Séjourné meets Mr Jean-François Fallacher  Chef Executive Officer of EUTELSAT
@@ -27,388 +27,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné meets Mr Jean-Fr
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-02-4246242864@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Executive Vice-President Fitto participates in the celebrations marking the National Day of the Italian Republic\, hosted by President Sergio Mattarella
-LOCATION:Rome\, Italy
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Executive Vice-President Fitto participates in the
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Executive Vice-President Fitto participates in the
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-1905677821@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Šuica attends the High-Level Geopolitical Dialogue at the European Parliament
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Šuica attends the High-Level Geopolit
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Šuica attends the High-Level Geopolit
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-6951675244@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Šefčovič has a videoconference call with Mr Eddy Ordonez\, Minister of Economic Development of Honduras
-LOCATION:
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Šefčovič has a videoconference call w
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Šefčovič has a videoconference call w
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-332643641@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:High Representative Vice-President Kallas meets Mr Manuel Tovar\, Foreign Minister of Costa Rica
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: High Representative Vice-President Kallas meets Mr
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: High Representative Vice-President Kallas meets Mr
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-5905442351@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:High Representative Vice-President Kallas speaks at European Parliament's High Level Geopolitical Dialogue
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: High Representative Vice-President Kallas speaks a
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: High Representative Vice-President Kallas speaks a
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-2954777473@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Šuica meets with the senior management of the Union for the Mediterranean
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Šuica meets with the senior managemen
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Šuica meets with the senior managemen
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-5946259205@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Šefčovič receives Ms Hildegard Müller\, President of the German Association of the Automotive Industry (VDA)
-LOCATION:
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Šefčovič receives Ms Hildegard Müller
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Šefčovič receives Ms Hildegard Müller
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-274859824@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Dombrovskis gives a virtual speech at the Government Borrowers Forum
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Dombrovskis gives a virtual speech at
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Dombrovskis gives a virtual speech at
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-8744107222@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Kadis delivers an opening speech at the High-Level Conference: “Navigating the Regional Fisheries Management Organization (RFMO)- BBNJ Interface – Dialogue on Cooperation and Coherence”
-LOCATION:
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Kadis delivers an opening speech at t
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Kadis delivers an opening speech at t
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-6282441986@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Dombrovskis gives a keynote speech at "The International Monetary System and the Role of the Euro" Workshop
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Dombrovskis gives a keynote speech at
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Dombrovskis gives a keynote speech at
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-822659513@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Šuica meets with a group of Members of the Spanish Parliament
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Šuica meets with a group of Members o
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Šuica meets with a group of Members o
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-5138360635@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Kubilius participates in the debate of the European Parliament Former Members Association “The way to achieve a genuine European Defence Union”
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Kubilius participates in the debate o
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Kubilius participates in the debate o
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-4823806478@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Kadis receives representatives of the European Small Scale Fisheries Alliance (AEPA)
-LOCATION:
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Kadis receives representatives of the
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Kadis receives representatives of the
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-1349143934@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Hansen meets with Mr Peter Kullgren\, Minister for Rural Affairs of Sweden
-LOCATION:Solna\, Sweden
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Hansen meets with Mr Peter Kullgren\,
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Hansen meets with Mr Peter Kullgren\,
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-4323532446@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Hansen attends the 10th Forest Europe Ministerial Conference and delivers a keynote speech
-LOCATION:Stockholm\, Sweden
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Hansen attends the 10th Forest Europe
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Hansen attends the 10th Forest Europe
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-2190124091@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Hansen visits the Tullgarn Kungsgård farm
-LOCATION:Norrköping\, Sweden
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Hansen visits the Tullgarn Kungsgård 
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Hansen visits the Tullgarn Kungsgård 
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-8447933562@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Síkela together with HRVP Kallas\, Commissioners Šuica and Kos participate in the High-level geopolitical dialogue in DEVE/AFET committees at the European Parliament
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Síkela together with HRVP Kallas\, Co
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Síkela together with HRVP Kallas\, Co
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-3337313553@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Síkela receives with Mr Manuel Tovar Rivera\, Minister of Foreign Affairs of Costa Rica
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Síkela receives with Mr Manuel Tovar 
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Síkela receives with Mr Manuel Tovar 
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-115757151@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Síkela meets with Mr David McAllister\, Member of the European Parliament
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Síkela meets with Mr David McAllister
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Síkela meets with Mr David McAllister
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-7186777317@sejourn-eu
-DTSTAMP:20260601T223323Z
-DTSTART;VALUE=DATE:20260602
-DTEND;VALUE=DATE:20260602
-SUMMARY:Commissioner Síkela meets with Mr Bernd Lange\, Member of the European Parliament
-LOCATION:Brussels\, Belgium
-STATUS:CONFIRMED
-BEGIN:VALARM
-TRIGGER:-P1D
-ACTION:DISPLAY
-DESCRIPTION:Tomorrow: Commissioner Síkela meets with Mr Bernd Lange\, Me
-END:VALARM
-BEGIN:VALARM
-TRIGGER:-PT1H
-ACTION:DISPLAY
-DESCRIPTION:In 1 hour: Commissioner Síkela meets with Mr Bernd Lange\, Me
-END:VALARM
-END:VEVENT
-BEGIN:VEVENT
-UID:2026-06-02-9084856451@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-06-02-1888913882@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in audition with three  Parliamentary Committee on Industrial  Accelerator Act
@@ -426,8 +46,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-02-2016327979@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-06-02-8096569996@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in Audition with European Parliament Committee on the Internal Market and Consumer Protection
@@ -445,8 +65,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-6306217261@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-06-01-5796618242@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné meets Mr Alain Di Crescenzo\, President of CCI France  (French Chambers of Commerce and Industry)
@@ -464,8 +84,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné meets Mr Alain D
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-06-01-2484899277@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-06-01-7679149710@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné participates in Choose France Forum
@@ -483,8 +103,8 @@ DESCRIPTION:In 1 hour: Executive Vice-President Séjourné participates in
 END:VALARM
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-1850548534@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-28-8771972464@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
@@ -492,8 +112,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-3043806054@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-28-3812377958@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Michał Baranowski\, Undersecretary of State at the Ministry of Economic Development and Technology of Poland
@@ -501,8 +121,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-28-367191897@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-28-5594329749@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Sakari Rainer Puisto\, Minister of Economic Affairs of Finland
@@ -510,8 +130,8 @@ LOCATION:Brussels\, Belgium
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-2502635443@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-26-273287333@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné participates in roundtable with Mr Peter Burke Minister for Enterprise \, Tourism and Employment of Ireland together with Irish Business Associations
@@ -519,8 +139,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-4753728498@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-26-3869042907@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Mr Peter Burke\, Minister for Enterprise\, Tourism and Employment of  Ireland
@@ -528,8 +148,8 @@ LOCATION:Dublin\, Ireland
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-05-26-9332626935@sejourn-eu
-DTSTAMP:20260601T223323Z
+UID:2026-05-26-6323084971@sejourn-eu
+DTSTAMP:20260601T223506Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Ms Helen McEntee\, Minister for Defence\, Foreign Affairs and Trade
