@@ -173,6 +173,10 @@ def scrape_from_ics() -> list:
         if not summary or not dtstart or len(dtstart) != 8:
             continue
 
+        # Only keep Séjourné's events
+        if "journ" not in summary.lower():
+            continue
+
         event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
         # 不再丢弃旧事件，历史行程永久保留
 
