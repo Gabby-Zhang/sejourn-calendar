@@ -123,6 +123,12 @@ def scrape_from_website() -> list:
         if not all_dates:
             break
 
+        # CDN cache detected: new page has no new events (all already seen)
+        new_keys = {f"{ev['date']}|{ev['title']}" for ev in sejourn_evs}
+        if page > 0 and new_keys and new_keys.issubset(seen):
+            print(f"[Website] CDN cache detected at page {page+1}, stopping.")
+            break
+
         for ev in sejourn_evs:
             k = f"{ev['date']}|{ev['title']}"
             if ev["date"] >= cutoff and k not in seen:
@@ -131,11 +137,6 @@ def scrape_from_website() -> list:
 
         # Stop when the oldest event on this page is before our cutoff
         if min(all_dates) < cutoff:
-            break
-
-        # CDN cache detected: all dates identical means same page served repeatedly
-        if len(set(all_dates)) <= 2 and page > 0:
-            print(f"[Website] CDN cache detected at page {page+1}, stopping.")
             break
 
     print(f"[Website] Found {len(found)} Séjourné events.")
