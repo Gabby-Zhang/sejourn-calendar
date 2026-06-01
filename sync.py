@@ -20,13 +20,14 @@ from bs4 import BeautifulSoup
 
 # ── Config ─────────────────────────────────────────────────────────────────────
 
-# Unfiltered URL — server-side filter doesn't work from cloud IPs,
-# so we grab all commissioners and filter for Séjourné client-side.
+# Séjourné-specific filtered URL (server-side filter by commissioner ID)
 BASE_URL = (
     "https://commission.europa.eu/about/organisation/college-commissioners"
     "/calendar-items-president-and-commissioners_en"
-    "?f%5B0%5D=ewcms_calendar_status%3Apast"
-    "&f%5B1%5D=ewcms_calendar_status%3Aupcoming"
+    "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic"
+    "%3Ahttp%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D"
+    "&f%5B1%5D=ewcms_calendar_status%3Apast"
+    "&f%5B2%5D=ewcms_calendar_status%3Aupcoming"
 )
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
@@ -86,9 +87,6 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list]:
         title_el    = article.select_one(".ecl-content-block__title")
         location_el = article.select_one(".ecl-content-block__secondary-meta-label")
         title = title_el.get_text(strip=True) if title_el else ""
-
-        if "journ" not in title.lower():
-            continue
 
         classes = time_el.get("class", [])
         status = ("past" if "ecl-date-block--past" in classes
