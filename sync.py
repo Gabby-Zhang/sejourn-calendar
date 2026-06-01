@@ -88,6 +88,10 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list]:
         location_el = article.select_one(".ecl-content-block__secondary-meta-label")
         title = title_el.get_text(strip=True) if title_el else ""
 
+        # Client-side filter: only Séjourné's events
+        if "journ" not in title.lower():
+            continue
+
         classes = time_el.get("class", [])
         status = ("past" if "ecl-date-block--past" in classes
                   else "ongoing" if "ecl-date-block--ongoing" in classes
