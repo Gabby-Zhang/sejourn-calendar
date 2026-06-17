@@ -142,4 +142,13 @@ SUMMARY:Executive Vice-President Séjourné participates in working dinner with 
 LOCATION:Paris\, France
 STATUS:CONFIRMED
 END:VEVENT
+BEGIN:VEVENT
+UID:2026-06-25-manual-cpme@sejourn-eu
+DTSTAMP:20260617T000000Z
+DTSTART;VALUE=DATE:20260625
+DTEND;VALUE=DATE:20260625
+SUMMARY:Executive Vice-President Séjourné participates in plenary session «Souveraineté industrielle : l'Europe peut-elle encore reprendre la main ?» at La Grande Assemblée des Entrepreneurs (CPME)
+LOCATION:Parc des Princes\, Paris\, France
+STATUS:CONFIRMED
+END:VEVENT
 END:VCALENDAR
