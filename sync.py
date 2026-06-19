@@ -336,7 +336,7 @@ def generate_ics(events: list) -> str:
         "PRODID:-//Sejourn EU Commission Calendar//EN",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "X-WR-CALNAME:Sejourn - EU Commission",
+        "X-WR-CALNAME:Séjourné - EC Calendar",
         "X-WR-TIMEZONE:Europe/Brussels",
         "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
         "X-PUBLISHED-TTL:PT1H",
