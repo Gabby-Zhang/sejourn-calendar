@@ -305,6 +305,62 @@ def scrape_from_ics() -> list:
     return events
 
 
+# ── Cross-source dedup ──────────────────────────────────────────────────────────
+
+# Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
+# titles the same meeting differently ("Executive Vice-President Séjourné meets
+# Mr X, President of <org>"). When both describe the same day+org, keep the
+# richer agenda one and drop the Transparency duplicate.
+_TRANSPARENCY_PREFIXES = ("Séjourné Cabinet meets", "Séjourné meets")
+_DEDUP_STOPWORDS = {
+    "france", "paris", "french", "europe", "european", "union", "brussels",
+    "bruxelles", "national", "federation", "fédération", "chambers", "commerce",
+    "industry", "industrie", "minister", "ministre", "president", "président",
+    "groupe", "association", "company", "group",
+}
+
+
+def _is_transparency_style(title: str) -> bool:
+    return any(title.startswith(p) for p in _TRANSPARENCY_PREFIXES)
+
+
+def _org_signature(title: str) -> tuple:
+    """(primary org phrase, distinctive tokens) for a Transparency-style title."""
+    t = title
+    for p in _TRANSPARENCY_PREFIXES:
+        if t.startswith(p):
+            t = t[len(p):].strip()
+            break
+    primary = t.split(" (")[0].strip().lower()
+    tokens = {
+        w for w in re.findall(r"[0-9a-zàâäéèêëîïôöùûüç]+", t.lower())
+        if len(w) >= 5 and w not in _DEDUP_STOPWORDS
+    }
+    return primary, tokens
+
+
+def drop_transparency_duplicates(events: list) -> list:
+    # Anchors = the official-agenda-style events, grouped by date.
+    anchors_by_date = {}
+    for e in events:
+        if not _is_transparency_style(e["title"]):
+            anchors_by_date.setdefault(e["date"], []).append(e["title"].lower())
+
+    out = []
+    for e in events:
+        if _is_transparency_style(e["title"]):
+            primary, tokens = _org_signature(e["title"])
+            anchors = anchors_by_date.get(e["date"], [])
+            dup = (primary and any(primary in a for a in anchors)) or \
+                  any(tok in a for tok in tokens for a in anchors)
+            if dup:
+                print(f"[dedup] drop Transparency dup of agenda event: "
+                      f"{e['date']} {e['title']}")
+                continue
+        out.append(e)
+    return out
+
+
 # ── Merge all sources ───────────────────────────────────────────────────────────
 
 def collect_all_events() -> list:
@@ -320,9 +376,9 @@ def collect_all_events() -> list:
         if k not in merged:
             merged[k] = ev
 
-    out = list(merged.values())
+    out = drop_transparency_duplicates(list(merged.values()))
     out.sort(key=lambda e: e["date"], reverse=True)
-    print(f"[Total] {len(out)} unique Séjourné events after merging.")
+    print(f"[Total] {len(out)} unique Séjourné events after merging + dedup.")
     return out
 
 
