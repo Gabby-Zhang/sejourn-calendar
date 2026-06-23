@@ -32,11 +32,17 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           git add sejourn.ics sync_state.json
-          git diff --staged --quiet && exit 0
-          git commit -m "chore: update calendar $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git diff --staged --quiet && echo "no changes" && exit 0
+
           for i in 1 2 3; do
-            git pull --rebase --autostash origin main && git push && exit 0
+            git fetch origin main
+            git reset --soft origin/main          # align to latest remote, keep generated files
+            git add sejourn.ics sync_state.json
+            git diff --staged --quiet && echo "already up to date" && exit 0
+            git commit -m "chore: update calendar $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push origin main && exit 0
             echo "push attempt $i hit a race, retrying..." && sleep 5
           done
           echo "push failed after 3 attempts" && exit 1
