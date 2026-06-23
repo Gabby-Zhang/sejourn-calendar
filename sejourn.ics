@@ -8,6 +8,17 @@ X-WR-TIMEZONE:Europe/Brussels
 REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
+UID:2026-06-23-dc4bf79816@sejourn-eu
+DTSTAMP:20260623T090000Z
+DTSTART;VALUE=DATE:20260623
+DTEND;VALUE=DATE:20260623
+SUMMARY:Executive Vice-President Séjourné en visite au Marché international du film d'animation (MIFA) — « c'est un signal fort »
+LOCATION:Centre de Congrès Impérial\, Annecy\, France
+DESCRIPTION:Visite officielle du MIFA (11h) puis ouverture officielle et photo (12h15). Source: Le Dauphiné Libéré.\nhttps://www.ledauphine.com/economie/2026/06/22/stephane-sejourne-au-marche-international-du-film-d-animation-c-est-un-signal-fort
+URL:https://www.ledauphine.com/economie/2026/06/22/stephane-sejourne-au-marche-international-du-film-d-animation-c-est-un-signal-fort
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2026-06-25-6153e7aac9@sejourn-eu
 DTSTAMP:20260623T081536Z
 DTSTART;VALUE=DATE:20260625
