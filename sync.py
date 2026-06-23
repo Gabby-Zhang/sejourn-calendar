@@ -13,20 +13,33 @@ Detection strategies (combined, deduplicated):
      source while the aggregate page's pagination is broken.
   3. The ICS file committed to this repo — preserves history (incl. events the
      Mac script found) so nothing is ever lost between runs.
+  4. EC Presscorner — his speeches, statements and read-outs (machine-readable
+     JSON API). Catches public-appearance events the agenda/register miss.
+  5. EU Transparency Register missions — his official travel (per-host XLSX
+     export, parsed with the stdlib). Real "where is he" itinerary data:
+     Prague, Washington, Davos… with dates + locations.
+
+Strategies 1–5 feed the ICS. A sixth, non-ICS channel (Google News) sends
+"sightings" notifications only — see notify_news().
 
 Design note: strategies 1 and 2 fail in *different* ways — (1) survives the
 facet dropping him (name filter), (2) survives the aggregate page going stale.
 Together they self-heal: when the EU fixes pagination, (1) auto-resumes full
-coverage with zero code changes.
+coverage with zero code changes. Each added source (4, 5, news) is independent
+and degrades gracefully — a failure in one prints a warning and returns [].
 """
 
 import hashlib
+import html
+import io
 import json
 import os
 import re
 import time
+import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from xml.etree import ElementTree as ET
 
 import requests
 from bs4 import BeautifulSoup
@@ -47,7 +60,30 @@ TRANSPARENCY_HOSTS = [
     # (label, host UUID, title prefix used for events)
     ("self",    "d8fba42d-8cc3-42c8-b1f1-e07d9b2ee8ea", "Séjourné meets"),
     ("cabinet", "21deeb50-48f9-40a3-9ab0-ac66cdbb2ca2", "Séjourné Cabinet meets"),
+    # To track more channels, add cabinet members' host UUIDs here. Find them on
+    # the member's Transparency page (…/meeting.do?host=<UUID>); the label/prefix
+    # is free-text used only in notifications.
 ]
+
+# EC Presscorner — speeches / statements / read-outs that mention Séjourné.
+PRESSCORNER_API    = "https://ec.europa.eu/commission/presscorner/api/search"
+PRESSCORNER_DETAIL = "https://ec.europa.eu/commission/presscorner/detail/en/"
+# Event-like doc types only. Deliberately excludes MEX (daily-news round-ups)
+# and CLDR (the weekly college calendar) — those merely mention him in passing.
+PRESSCORNER_TYPES  = {"SPEECH", "STATEMENT", "READ"}
+
+# Transparency Register missions (official travel) — per-host XLSX export.
+MISSIONS_EXPORT = (
+    "https://ec.europa.eu/transparency-initiative/meetings"
+    "/data/missions/commissioners/export?hostId="
+)
+
+# Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
+# it never pollutes the subscribable calendar with non-event chatter.
+GOOGLE_NEWS_RSS = (
+    "https://news.google.com/rss/search?"
+    "q=%22S%C3%A9journ%C3%A9%22&hl=en-US&gl=US&ceid=US:en"
+)
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
 STATE_FILE  = Path("sync_state.json")
@@ -75,6 +111,8 @@ SOURCE_BADGE = {
     "calendar":     "🏛",
     "transparency": "🤝",
     "ics":          "🏛",
+    "press":        "🎤",
+    "mission":      "✈️",
 }
 
 
@@ -305,6 +343,144 @@ def scrape_from_ics() -> list:
     return events
 
 
+# ── Strategy 4: EC Presscorner speeches / statements ───────────────────────────
+
+def scrape_from_presscorner() -> list:
+    """His speeches, statements and read-outs from the Presscorner JSON API.
+
+    The search returns anything *mentioning* him (incl. other commissioners'
+    speeches and daily-news round-ups), so we keep only event-like doc types
+    and re-apply the "journ" name filter on the title.
+    """
+    cutoff = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+    today  = date.today().isoformat()
+    try:
+        resp = requests.get(
+            PRESSCORNER_API,
+            params={"text": "Séjourné", "pagesize": 60},
+            headers=HEADERS, timeout=30,
+        )
+        resp.raise_for_status()
+        items = resp.json().get("docuLanguageListResources", []) or []
+    except (requests.RequestException, ValueError) as e:
+        print(f"[Presscorner] fetch failed: {e}")
+        return []
+
+    events = []
+    seen   = set()
+    for it in items:
+        if it.get("languageCode") != "EN":
+            continue
+        code = (it.get("docutype") or {}).get("code", "")
+        if code not in PRESSCORNER_TYPES:
+            continue
+        title = (it.get("title") or "").strip()
+        if "journ" not in title.lower():
+            continue
+        ev_date = (it.get("eventDate") or "")[:10]
+        if not re.match(r"\d{4}-\d{2}-\d{2}$", ev_date):
+            continue
+        k = f"{ev_date}|{title}"
+        if k in seen:
+            continue
+        seen.add(k)
+
+        ref = (it.get("refCode") or "").lower().replace("/", "_")
+        url = PRESSCORNER_DETAIL + ref if ref else ""
+        events.append({
+            "title":    title,
+            "date":     ev_date,
+            "location": "",
+            # Published docs are records, not reminders → never "upcoming".
+            "status":   "ongoing" if ev_date == today else "past",
+            "source":   "press",
+            "subject":  (it.get("docutype") or {}).get("description", ""),
+            "url":      url,
+        })
+
+    fresh = sum(1 for e in events if e["date"] >= cutoff)
+    print(f"[Presscorner] {len(events)} speech/statement items "
+          f"({fresh} within last {DAYS_BACK} days).")
+    return events
+
+
+# ── Strategy 5: EU Transparency Register missions (official travel) ─────────────
+
+def _parse_missions_xlsx(content: bytes) -> list:
+    """Parse the missions XLSX export into a list of row dicts (stdlib only).
+
+    Columns (per the export): A=Date from, B=Date to, C=Location, D=Purpose,
+    E=Context, F–I costs, J=Comments.
+    """
+    ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    z  = zipfile.ZipFile(io.BytesIO(content))
+    sroot = ET.fromstring(z.read("xl/sharedStrings.xml"))
+    shared = ["".join(t.text or "" for t in si.iter(ns + "t"))
+              for si in sroot.findall(ns + "si")]
+    sheet = ET.fromstring(z.read("xl/worksheets/sheet1.xml"))
+
+    rows = []
+    for row in sheet.iter(ns + "row"):
+        cells = {}
+        for c in row.findall(ns + "c"):
+            col = re.match(r"[A-Z]+", c.get("r", "")).group()
+            v = c.find(ns + "v")
+            if v is None:
+                continue
+            cells[col] = shared[int(v.text)] if c.get("t") == "s" else v.text
+        rows.append(cells)
+    return rows
+
+
+def scrape_from_missions() -> list:
+    # Missions are the commissioner's personal travel → only the "self" host.
+    host = next((h for lbl, h, _ in TRANSPARENCY_HOSTS if lbl == "self"), None)
+    if not host:
+        return []
+    try:
+        resp = requests.get(MISSIONS_EXPORT + host, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+        rows = _parse_missions_xlsx(resp.content)
+    except (requests.RequestException, zipfile.BadZipFile, KeyError, ET.ParseError) as e:
+        print(f"[Missions] fetch/parse failed: {e}")
+        return []
+
+    today  = date.today().isoformat()
+    events = []
+    for r in rows:
+        m = re.match(r"(\d{2})/(\d{2})/(\d{4})", (r.get("A") or "").strip())
+        if not m:                       # skips title + header + any cost-only rows
+            continue
+        dd, mm, yyyy = m.groups()
+        d_from   = f"{yyyy}-{mm}-{dd}"
+        location = (r.get("C") or "").strip()
+        purpose  = " ".join((r.get("D") or "").split())
+
+        d_end = ""
+        m2 = re.match(r"(\d{2})/(\d{2})/(\d{4})", (r.get("B") or "").strip())
+        if m2:
+            dd2, mm2, yyyy2 = m2.groups()
+            d_end = f"{yyyy2}-{mm2}-{dd2}"
+
+        status = ("upcoming" if d_from > today
+                  else "ongoing" if d_from == today
+                  else "past")
+
+        events.append({
+            "title":    f"Mission: {location}" if location else "Mission",
+            "date":     d_from,
+            "date_end": d_end,
+            "location": location,
+            "status":   status,
+            "source":   "mission",
+            "subject":  purpose,
+            "url":      "",
+        })
+
+    print(f"[Missions] {len(events)} missions parsed.")
+    return events
+
+
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
 
 # Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
@@ -364,14 +540,16 @@ def drop_transparency_duplicates(events: list) -> list:
 # ── Merge all sources ───────────────────────────────────────────────────────────
 
 def collect_all_events() -> list:
-    web_events = scrape_from_website()
-    reg_events = scrape_from_transparency()
-    ics_events = scrape_from_ics()
+    web_events     = scrape_from_website()
+    reg_events     = scrape_from_transparency()
+    press_events   = scrape_from_presscorner()
+    mission_events = scrape_from_missions()
+    ics_events     = scrape_from_ics()
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
     # so that subject/url/source fields stay populated.
     merged = {}
-    for ev in web_events + reg_events + ics_events:
+    for ev in web_events + reg_events + press_events + mission_events + ics_events:
         k = f"{ev['date']}|{ev['title']}"
         if k not in merged:
             merged[k] = ev
@@ -399,6 +577,14 @@ def generate_ics(events: list) -> str:
     ]
     for ev in events:
         dt    = ev["date"].replace("-", "")
+        # Multi-day events (missions) carry an inclusive end date; ICS all-day
+        # DTEND is exclusive, so add one day. Single-day events keep DTEND=DTSTART.
+        end = ev.get("date_end")
+        if end and end >= ev["date"]:
+            end_dt = (datetime.strptime(end, "%Y-%m-%d")
+                      + timedelta(days=1)).strftime("%Y%m%d")
+        else:
+            end_dt = dt
         # Deterministic UID so the same event keeps one identity across runs
         # (Python's str hash is salted per-process, which would churn UIDs and
         # make subscriber calendars re-create / re-alert the same event).
@@ -413,6 +599,10 @@ def generate_ics(events: list) -> str:
             desc_parts.append(ev["subject"])
         if ev.get("source") == "transparency":
             desc_parts.append("Source: EU Transparency Register")
+        elif ev.get("source") == "mission":
+            desc_parts.append("Source: EU Transparency Register (mission)")
+        elif ev.get("source") == "press":
+            desc_parts.append("Source: EC Presscorner")
         if ev.get("url"):
             desc_parts.append(ev["url"])
         description = "\\n".join(p.replace(",", "\\,") for p in desc_parts)
@@ -422,7 +612,7 @@ def generate_ics(events: list) -> str:
             f"UID:{uid}",
             f"DTSTAMP:{now}",
             f"DTSTART;VALUE=DATE:{dt}",
-            f"DTEND;VALUE=DATE:{dt}",
+            f"DTEND;VALUE=DATE:{end_dt}",
             f"SUMMARY:{title}",
             f"LOCATION:{loc}",
         ]
@@ -483,7 +673,9 @@ def push_notification(new_events: list):
 
     count    = len(new_events)
     n_mtg    = sum(1 for e in new_events if e.get("source") == "transparency")
-    n_cal    = count - n_mtg
+    n_press  = sum(1 for e in new_events if e.get("source") == "press")
+    n_trip   = sum(1 for e in new_events if e.get("source") == "mission")
+    n_cal    = count - n_mtg - n_press - n_trip
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -492,6 +684,10 @@ def push_notification(new_events: list):
         bits.append(f"{n_cal} agenda")
     if n_mtg:
         bits.append(f"{n_mtg} meeting{'s' if n_mtg != 1 else ''}")
+    if n_press:
+        bits.append(f"{n_press} speech{'es' if n_press != 1 else ''}")
+    if n_trip:
+        bits.append(f"{n_trip} mission{'s' if n_trip != 1 else ''}")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
     details = "\n".join(_fmt_event_line(e) for e in new_events[:6])
@@ -514,42 +710,106 @@ def push_notification(new_events: list):
         print(f"Push notification failed: {e}")
 
 
+def notify_news(state: dict) -> int:
+    """Google News 'sightings' channel — notify on new articles mentioning him.
+
+    Deliberately NOT written to the ICS: these are press mentions, not events.
+    State keys are namespaced ('news|…') so they never collide with calendar
+    events. Returns the number of newly-seen articles (mutates `state`).
+    """
+    if not NTFY_TOPIC:
+        return 0
+    try:
+        resp = requests.get(GOOGLE_NEWS_RSS, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        print(f"[News] fetch failed: {e}")
+        return 0
+
+    new = []
+    for block in re.findall(r"<item>(.*?)</item>", resp.text, re.S)[:40]:
+        tm = re.search(r"<title>(.*?)</title>", block, re.S)
+        lm = re.search(r"<link>(.*?)</link>", block, re.S)
+        title = html.unescape(re.sub(r"<[^>]+>", "", tm.group(1)).strip()) if tm else ""
+        link  = re.sub(r"<[^>]+>", "", lm.group(1)).strip() if lm else ""
+        if "journ" not in title.lower():
+            continue
+        key = "news|" + hashlib.md5(title.encode("utf-8")).hexdigest()[:12]
+        if key in state:
+            continue
+        state[key] = datetime.now().isoformat()
+        new.append((title, link))
+
+    if not new:
+        print("[News] no new articles.")
+        return 0
+
+    body = "\n\n".join(f"📰 {t[:90]}\n{l}" for t, l in new[:6])
+    if len(new) > 6:
+        body += f"\n…and {len(new) - 6} more"
+    try:
+        requests.post(
+            f"https://ntfy.sh/{NTFY_TOPIC}",
+            data=(f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n"
+                  + body).encode("utf-8"),
+            headers={
+                "Title": "Séjourné - in the news",
+                "Priority": "low",
+                "Tags": "newspaper",
+            },
+            timeout=10,
+        )
+        print(f"[News] notified {len(new)} new article(s).")
+    except requests.RequestException as e:
+        print(f"[News] notify failed: {e}")
+    return len(new)
+
+
 # ── Main ───────────────────────────────────────────────────────────────────────
 
 def main():
     print("=== Séjourné EU Commission Cloud Sync ===\n")
 
     events = collect_all_events()
+
+    state         = load_state()
+    state_changed = False
+
     if not events:
         print("No events found from any source.")
-        return
-
-    state      = load_state()
-    new_events = [e for e in events if event_key(e) not in state]
-
-    # Notify only on recent events; older backlog is recorded silently so the
-    # ICS/history stays complete without blasting the phone with stale items.
-    cutoff       = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
-    notify_events = [e for e in new_events if e["date"] >= cutoff]
-    print(f"\n{len(events)} total  •  {len(new_events)} new "
-          f"({len(notify_events)} recent, {len(new_events)-len(notify_events)} backlog) "
-          f"•  {len(events)-len(new_events)} unchanged")
-
-    # Always write ICS with the latest merged data.
-    ICS_FILE.write_text(generate_ics(events), encoding="utf-8")
-    print(f"Written {ICS_FILE} ({len(events)} events)")
-
-    if new_events:
-        for e in new_events:
-            state[event_key(e)] = datetime.now().isoformat()
-        save_state(state)
-        if notify_events:
-            push_notification(notify_events)
-        else:
-            print("New events are all backlog — recorded without notifying.")
-        print("Done ✓")
     else:
-        print("No new events — nothing to notify.")
+        new_events = [e for e in events if event_key(e) not in state]
+
+        # Notify only on recent events; older backlog is recorded silently so the
+        # ICS/history stays complete without blasting the phone with stale items.
+        cutoff        = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+        notify_events = [e for e in new_events if e["date"] >= cutoff]
+        print(f"\n{len(events)} total  •  {len(new_events)} new "
+              f"({len(notify_events)} recent, {len(new_events)-len(notify_events)} backlog) "
+              f"•  {len(events)-len(new_events)} unchanged")
+
+        # Always write ICS with the latest merged data.
+        ICS_FILE.write_text(generate_ics(events), encoding="utf-8")
+        print(f"Written {ICS_FILE} ({len(events)} events)")
+
+        if new_events:
+            for e in new_events:
+                state[event_key(e)] = datetime.now().isoformat()
+            state_changed = True
+            if notify_events:
+                push_notification(notify_events)
+            else:
+                print("New events are all backlog — recorded without notifying.")
+        else:
+            print("No new events — nothing to notify.")
+
+    # Independent 'sightings' channel — never touches the ICS.
+    if notify_news(state):
+        state_changed = True
+
+    if state_changed:
+        save_state(state)
+    print("Done ✓")
 
 
 if __name__ == "__main__":
