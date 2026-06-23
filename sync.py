@@ -36,6 +36,7 @@ import json
 import os
 import re
 import time
+import unicodedata
 import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -116,6 +117,21 @@ SOURCE_BADGE = {
 }
 
 
+# ── Name filter ─────────────────────────────────────────────────────────────────
+
+def mentions_sejourne(text: str) -> bool:
+    """True iff the text names Séjourné.
+
+    Accent-insensitive match on 'sejourn' — matches "Séjourné" / "Sejourne"
+    while NOT firing on unrelated words that merely contain "journ"
+    (journalist, journal, journey…). A bare "journ" substring used to leak
+    e.g. "Institute of Maltese Journalists" into the calendar.
+    """
+    norm = (unicodedata.normalize("NFKD", text)
+            .encode("ascii", "ignore").decode("ascii").lower())
+    return "sejourn" in norm
+
+
 # ── Strategy 1: aggregate calendar page (all commissioners, name-filtered) ──────
 
 def fetch_page(page: int) -> BeautifulSoup:
@@ -164,7 +180,7 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple]:
         all_titles.append(title)
 
         # Client-side filter: only Séjourné's events.
-        if "journ" not in title.lower():
+        if not mentions_sejourne(title):
             continue
 
         classes = time_el.get("class", [])
@@ -321,7 +337,7 @@ def scrape_from_ics() -> list:
 
         if not summary or not dtstart or len(dtstart) != 8:
             continue
-        if "journ" not in summary.lower():
+        if not mentions_sejourne(summary):
             continue
 
         event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
@@ -375,7 +391,7 @@ def scrape_from_presscorner() -> list:
         if code not in PRESSCORNER_TYPES:
             continue
         title = (it.get("title") or "").strip()
-        if "journ" not in title.lower():
+        if not mentions_sejourne(title):
             continue
         ev_date = (it.get("eventDate") or "")[:10]
         if not re.match(r"\d{4}-\d{2}-\d{2}$", ev_date):
@@ -732,7 +748,7 @@ def notify_news(state: dict) -> int:
         lm = re.search(r"<link>(.*?)</link>", block, re.S)
         title = html.unescape(re.sub(r"<[^>]+>", "", tm.group(1)).strip()) if tm else ""
         link  = re.sub(r"<[^>]+>", "", lm.group(1)).strip() if lm else ""
-        if "journ" not in title.lower():
+        if not mentions_sejourne(title):
             continue
         key = "news|" + hashlib.md5(title.encode("utf-8")).hexdigest()[:12]
         if key in state:
