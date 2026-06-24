@@ -37,6 +37,7 @@ import os
 import re
 import time
 import unicodedata
+import urllib.parse
 import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -79,6 +80,14 @@ MISSIONS_EXPORT = (
     "/data/missions/commissioners/export?hostId="
 )
 
+# EbS (audiovisual.ec.europa.eu) event-planning feed — the EC AV service's
+# schedule of upcoming covered events. Undocumented AWS backend behind the SPA;
+# the only source with precise start/end *times* (everything else is all-day)
+# and forward-looking. Filter by tagged personality, so zero name false hits.
+EBS_API = ("https://8hwk2cyeyb.execute-api.eu-west-1.amazonaws.com"
+           "/parrotfish-prod/search")
+EBS_DETAIL = "https://audiovisual.ec.europa.eu/en/event/"
+
 # Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
 # it never pollutes the subscribable calendar with non-event chatter.
 GOOGLE_NEWS_RSS = (
@@ -90,6 +99,11 @@ NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
 STATE_FILE  = Path("sync_state.json")
 ICS_FILE    = Path("sejourn.ics")
 DAYS_BACK   = 30            # rolling window for fresh events worth notifying on
+# Missions are published with a 2–4 month lag (bi-monthly, per Art. 6(2) Code of
+# Conduct), so a freshly *published* mission is always old by the 30-day window.
+# Use a wider window for them so new batches still notify — but not so wide it
+# replays years of backfilled history on first run.
+MISSION_NOTIFY_DAYS = 150
 MAX_PAGES   = 60           # safety cap; real stop is the date window / dup detection
 
 HEADERS = {
@@ -114,6 +128,7 @@ SOURCE_BADGE = {
     "ics":          "🏛",
     "press":        "🎤",
     "mission":      "✈️",
+    "ebs":          "📺",
 }
 
 
@@ -325,27 +340,37 @@ def scrape_from_ics() -> list:
         if "END:VEVENT" not in block:
             continue
         summary  = ""
-        dtstart  = ""
+        dtstart  = ""        # all-day  YYYYMMDD
         location = ""
+        start_dt = ""        # timed    YYYYMMDDTHHMMSSZ
+        end_dt   = ""
         for line in re.split(r"\r\n|\n", block):
             if line.startswith("SUMMARY:"):
                 summary = line[8:].replace("\\,", ",").replace("\\n", "\n").strip()
             elif line.startswith("DTSTART;VALUE=DATE:"):
                 dtstart = line[19:].strip()
+            elif line.startswith("DTSTART:"):            # timed (EbS) event
+                start_dt = line[8:].strip()
+            elif line.startswith("DTEND:"):
+                end_dt = line[6:].strip()
             elif line.startswith("LOCATION:"):
                 location = line[9:].replace("\\,", ",").strip()
 
-        if not summary or not dtstart or len(dtstart) != 8:
+        # Derive the calendar date from whichever DTSTART form is present.
+        if re.match(r"\d{8}T\d{6}", start_dt):
+            event_date = f"{start_dt[:4]}-{start_dt[4:6]}-{start_dt[6:8]}"
+        elif len(dtstart) == 8:
+            event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
+        else:
             continue
-        if not mentions_sejourne(summary):
+        if not summary or not mentions_sejourne(summary):
             continue
 
-        event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
         status = ("upcoming" if event_date > today
                   else "ongoing" if event_date == today
                   else "past")
 
-        events.append({
+        ev = {
             "title":    summary,
             "date":     event_date,
             "location": location,
@@ -353,7 +378,11 @@ def scrape_from_ics() -> list:
             "source":   "ics",
             "subject":  "",
             "url":      "",
-        })
+        }
+        if start_dt:                      # preserve timed events' clock times
+            ev["start_dt"] = start_dt
+            ev["end_dt"]   = end_dt
+        events.append(ev)
 
     print(f"[ICS] Found {len(events)} Séjourné events in sejourn.ics.")
     return events
@@ -497,6 +526,80 @@ def scrape_from_missions() -> list:
     return events
 
 
+# ── Strategy 6: EbS audiovisual event-planning (timed, forward-looking) ─────────
+
+def _ebs_en(entries: list, field: str = "content") -> str:
+    """Pick the English string from an EbS [{language, content/title}] list."""
+    if not entries:
+        return ""
+    chosen = next((e for e in entries if e.get("language") == "EN"), entries[0])
+    raw = chosen.get(field) or chosen.get("title") or chosen.get("content") or ""
+    return html.unescape(re.sub(r"<[^>]+>", "", raw)).strip()
+
+
+def _ebs_dt(iso: str) -> str:
+    """'2026-06-25T07:00:00.000Z' → '20260625T070000Z' (ICS UTC datetime)."""
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})", iso or "")
+    return ("".join(m.groups()) + "Z") if m else ""
+
+
+def scrape_from_ebs() -> list:
+    """Upcoming events the EC AV service plans to cover, filtered to Séjourné.
+
+    Filters on the tagged `personalities` (lastname) first — reliable, no
+    journalist-style false positives — and falls back to the title text.
+    """
+    url = EBS_API + "?" + urllib.parse.urlencode({
+        "mediaType": "EVENTPLANNING", "pageSize": 100,
+    })
+    try:
+        req = requests.get(url, headers={**HEADERS, "Accept": "application/json"},
+                           timeout=30)
+        req.raise_for_status()
+        items = req.json().get("items", []) or []
+    except (requests.RequestException, ValueError) as e:
+        print(f"[EbS] fetch failed: {e}")
+        return []
+
+    today  = date.today().isoformat()
+    events = []
+    for it in items:
+        people = " ".join(
+            f"{p.get('lastname','')} {p.get('title','')}"
+            for p in (it.get("personalities") or [])
+        )
+        title = _ebs_en(it.get("titles"))
+        if not (mentions_sejourne(people) or mentions_sejourne(title)):
+            continue
+
+        start_iso = it.get("startDateTime") or ""
+        ev_date   = start_iso[:10]
+        if not re.match(r"\d{4}-\d{2}-\d{2}$", ev_date):
+            continue
+
+        location = ", ".join(
+            t for t in (_ebs_en(loc.get("titles")) for loc in (it.get("locations") or []))
+            if t
+        )
+        ref = it.get("reference", "")
+        events.append({
+            "title":    title or "EC event",
+            "date":     ev_date,
+            "start_dt": _ebs_dt(start_iso),
+            "end_dt":   _ebs_dt(it.get("endDateTime") or ""),
+            "location": location,
+            "status":   "upcoming" if ev_date > today
+                        else "ongoing" if ev_date == today else "past",
+            "source":   "ebs",
+            "subject":  "",
+            "url":      (EBS_DETAIL + ref) if ref else "",
+        })
+
+    print(f"[EbS] {len(events)} planned events tagged Séjourné "
+          f"(of {len(items)} total upcoming).")
+    return events
+
+
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
 
 # Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
@@ -560,12 +663,15 @@ def collect_all_events() -> list:
     reg_events     = scrape_from_transparency()
     press_events   = scrape_from_presscorner()
     mission_events = scrape_from_missions()
+    ebs_events     = scrape_from_ebs()
     ics_events     = scrape_from_ics()
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
-    # so that subject/url/source fields stay populated.
+    # so that subject/url/source fields stay populated. EbS comes before the ICS
+    # copy so its precise start/end times survive the merge.
     merged = {}
-    for ev in web_events + reg_events + press_events + mission_events + ics_events:
+    for ev in (web_events + reg_events + press_events + mission_events
+               + ebs_events + ics_events):
         k = f"{ev['date']}|{ev['title']}"
         if k not in merged:
             merged[k] = ev
@@ -593,14 +699,23 @@ def generate_ics(events: list) -> str:
     ]
     for ev in events:
         dt    = ev["date"].replace("-", "")
-        # Multi-day events (missions) carry an inclusive end date; ICS all-day
-        # DTEND is exclusive, so add one day. Single-day events keep DTEND=DTSTART.
-        end = ev.get("date_end")
-        if end and end >= ev["date"]:
-            end_dt = (datetime.strptime(end, "%Y-%m-%d")
-                      + timedelta(days=1)).strftime("%Y%m%d")
+        # Three event shapes:
+        #   • timed (EbS): start_dt/end_dt are UTC datetimes → DTSTART/DTEND with time
+        #   • multi-day all-day (missions): inclusive date_end → exclusive DTEND +1 day
+        #   • single-day all-day (default): DTEND = DTSTART
+        timed = bool(ev.get("start_dt"))
+        if timed:
+            start_line = f"DTSTART:{ev['start_dt']}"
+            end_line   = f"DTEND:{ev.get('end_dt') or ev['start_dt']}"
         else:
-            end_dt = dt
+            end = ev.get("date_end")
+            if end and end >= ev["date"]:
+                end_dt = (datetime.strptime(end, "%Y-%m-%d")
+                          + timedelta(days=1)).strftime("%Y%m%d")
+            else:
+                end_dt = dt
+            start_line = f"DTSTART;VALUE=DATE:{dt}"
+            end_line   = f"DTEND;VALUE=DATE:{end_dt}"
         # Deterministic UID so the same event keeps one identity across runs
         # (Python's str hash is salted per-process, which would churn UIDs and
         # make subscriber calendars re-create / re-alert the same event).
@@ -619,6 +734,8 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: EU Transparency Register (mission)")
         elif ev.get("source") == "press":
             desc_parts.append("Source: EC Presscorner")
+        elif ev.get("source") == "ebs":
+            desc_parts.append("Source: EC Audiovisual (EbS) — planned coverage")
         if ev.get("url"):
             desc_parts.append(ev["url"])
         description = "\\n".join(p.replace(",", "\\,") for p in desc_parts)
@@ -627,8 +744,8 @@ def generate_ics(events: list) -> str:
             "BEGIN:VEVENT",
             f"UID:{uid}",
             f"DTSTAMP:{now}",
-            f"DTSTART;VALUE=DATE:{dt}",
-            f"DTEND;VALUE=DATE:{end_dt}",
+            start_line,
+            end_line,
             f"SUMMARY:{title}",
             f"LOCATION:{loc}",
         ]
@@ -691,7 +808,8 @@ def push_notification(new_events: list):
     n_mtg    = sum(1 for e in new_events if e.get("source") == "transparency")
     n_press  = sum(1 for e in new_events if e.get("source") == "press")
     n_trip   = sum(1 for e in new_events if e.get("source") == "mission")
-    n_cal    = count - n_mtg - n_press - n_trip
+    n_ebs    = sum(1 for e in new_events if e.get("source") == "ebs")
+    n_cal    = count - n_mtg - n_press - n_trip - n_ebs
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -704,6 +822,8 @@ def push_notification(new_events: list):
         bits.append(f"{n_press} speech{'es' if n_press != 1 else ''}")
     if n_trip:
         bits.append(f"{n_trip} mission{'s' if n_trip != 1 else ''}")
+    if n_ebs:
+        bits.append(f"{n_ebs} scheduled")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
     details = "\n".join(_fmt_event_line(e) for e in new_events[:6])
@@ -798,8 +918,12 @@ def main():
 
         # Notify only on recent events; older backlog is recorded silently so the
         # ICS/history stays complete without blasting the phone with stale items.
-        cutoff        = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
-        notify_events = [e for e in new_events if e["date"] >= cutoff]
+        # Missions get a wider window (they're published months after the fact).
+        cutoff      = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+        mis_cutoff  = (date.today() - timedelta(days=MISSION_NOTIFY_DAYS)).isoformat()
+        def _is_notify(e):
+            return e["date"] >= (mis_cutoff if e.get("source") == "mission" else cutoff)
+        notify_events = [e for e in new_events if _is_notify(e)]
         print(f"\n{len(events)} total  •  {len(new_events)} new "
               f"({len(notify_events)} recent, {len(new_events)-len(notify_events)} backlog) "
               f"•  {len(events)-len(new_events)} unchanged")
