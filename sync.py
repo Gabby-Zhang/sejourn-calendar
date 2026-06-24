@@ -90,11 +90,6 @@ NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
 STATE_FILE  = Path("sync_state.json")
 ICS_FILE    = Path("sejourn.ics")
 DAYS_BACK   = 30            # rolling window for fresh events worth notifying on
-# Missions are published with a 2–4 month lag (bi-monthly, per Art. 6(2) Code of
-# Conduct), so a freshly *published* mission is always old by the 30-day window.
-# Use a wider window for them so new batches still notify — but not so wide it
-# replays years of backfilled history on first run.
-MISSION_NOTIFY_DAYS = 150
 MAX_PAGES   = 60           # safety cap; real stop is the date window / dup detection
 
 HEADERS = {
@@ -803,12 +798,8 @@ def main():
 
         # Notify only on recent events; older backlog is recorded silently so the
         # ICS/history stays complete without blasting the phone with stale items.
-        # Missions get a wider window (they're published months after the fact).
-        cutoff      = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
-        mis_cutoff  = (date.today() - timedelta(days=MISSION_NOTIFY_DAYS)).isoformat()
-        def _is_notify(e):
-            return e["date"] >= (mis_cutoff if e.get("source") == "mission" else cutoff)
-        notify_events = [e for e in new_events if _is_notify(e)]
+        cutoff        = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+        notify_events = [e for e in new_events if e["date"] >= cutoff]
         print(f"\n{len(events)} total  •  {len(new_events)} new "
               f"({len(notify_events)} recent, {len(new_events)-len(notify_events)} backlog) "
               f"•  {len(events)-len(new_events)} unchanged")
