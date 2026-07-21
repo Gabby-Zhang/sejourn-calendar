@@ -9,7 +9,7 @@ REFRESH-INTERVAL;VALUE=DURATION:PT1H
 X-PUBLISHED-TTL:PT1H
 BEGIN:VEVENT
 UID:2026-07-01-7a35c3dd9e@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260701
 DTEND;VALUE=DATE:20260701
 SUMMARY:Executive Vice-President Séjourné receives Mr David Cvach\, French Permanent Representative to North Atlantic Treaty Organisation
@@ -18,7 +18,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-07-01-c9714d5223@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260701
 DTEND;VALUE=DATE:20260701
 SUMMARY:Executive Vice-President Séjourné receives Ms Gallina Vincelette\, Vice President for Operations Policy and Country Services (OPCS) at the World Bank Group
@@ -27,7 +27,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-29-57ebaf2944@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260629
 DTEND;VALUE=DATE:20260629
 SUMMARY:Executive Vice-President Séjourné receives Dr.-Ing. Christian Bruch\, President and Chief Executive Officer of Siemens Energy
@@ -36,7 +36,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-25-27718e0013@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260625
 DTEND;VALUE=DATE:20260625
 SUMMARY:Executive Vice-President Séjourné participates in Confédération des Petites et Moyennes Entreprises (CPME) conference
@@ -45,7 +45,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-25-33ff0be73a@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260625
 DTEND;VALUE=DATE:20260625
 SUMMARY:Executive Vice-President Séjourné participates in plenary session «Souveraineté industrielle : l'Europe peut-elle encore reprendre la main ?» at La Grande Assemblée des Entrepreneurs (CPME)
@@ -54,7 +54,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-23-dc4bf79816@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260623
 DTEND;VALUE=DATE:20260623
 SUMMARY:Executive Vice-President Séjourné en visite au Marché international du film d'animation (MIFA) — « c'est un signal fort »
@@ -63,25 +63,29 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-19-dd3f100a40@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260619
 DTEND;VALUE=DATE:20260619
 SUMMARY:Séjourné meets Doctolib
 LOCATION:Paris
+DESCRIPTION:Développement européen et perspectives internationale de l’entreprise\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/94dc41b8-3b5e-4e4a-ab5d-4e25e43899e7/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/94dc41b8-3b5e-4e4a-ab5d-4e25e43899e7/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-05-2402d4182e@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260605
 DTEND;VALUE=DATE:20260605
 SUMMARY:Séjourné meets Veolia Environnement (Veolia)
 LOCATION:Paris
+DESCRIPTION:Recourse efficiency and industrial transition\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/7ef6d230-887b-4063-a258-8ceb8c7056b9/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/7ef6d230-887b-4063-a258-8ceb8c7056b9/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-05-dda6942d92@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260605
 DTEND;VALUE=DATE:20260605
 SUMMARY:Executive Vice-President Séjourné meets Mr Jean-François Fallacher  Chef Executive Officer of EUTELSAT
@@ -90,7 +94,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-04-57bc8173d6@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260604
 DTEND;VALUE=DATE:20260604
 SUMMARY:Executive Vice-President Séjourné meets Mr István Kapitány\, Minister of Economy and Energy of Hungary
@@ -99,7 +103,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-04-743e9fa28b@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260604
 DTEND;VALUE=DATE:20260604
 SUMMARY:Executive Vice-President Séjourné meets Mr András Kármán\, Minister of Finance of Hungary
@@ -108,7 +112,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-02-6d4b808cfc@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in audition with three  Parliamentary Committee on Industrial  Accelerator Act
@@ -117,7 +121,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-02-f7147081be@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260602
 DTEND;VALUE=DATE:20260602
 SUMMARY:Executive Vice-President Séjourné participates in Audition with European Parliament Committee on the Internal Market and Consumer Protection
@@ -126,7 +130,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-01-c92e0ebecf@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné meets Mr Alain Di Crescenzo\, President of CCI France  (French Chambers of Commerce and Industry)
@@ -135,7 +139,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-06-01-53039fa4cc@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260601
 DTEND;VALUE=DATE:20260601
 SUMMARY:Executive Vice-President Séjourné participates in Choose France Forum
@@ -144,16 +148,18 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-29-d3ce2d8e86@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260529
 DTEND;VALUE=DATE:20260529
 SUMMARY:Séjourné meets ENEDIS (ENEDIS)
 LOCATION:Paris\, France
+DESCRIPTION:Enjeux stratégiques des réseaux électriques européens\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/517a8b99-e015-4b90-bf45-2651bc0b3d21/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/517a8b99-e015-4b90-bf45-2651bc0b3d21/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-28-7086b87779@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné participates in Competitiveness Council formal meeting
@@ -162,7 +168,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-28-e5862e6935@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Michał Baranowski\, Undersecretary of State at the Ministry of Economic Development and Technology of Poland
@@ -171,7 +177,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-28-eb45fe17f3@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260528
 DTEND;VALUE=DATE:20260528
 SUMMARY:Executive Vice-President Séjourné meets Mr Sakari Rainer Puisto\, Minister of Economic Affairs of Finland
@@ -180,16 +186,18 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-26-96f0774536@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Séjourné meets Ibec
 LOCATION:DUBLIN
+DESCRIPTION:European competitiveness\, investment and industrial policy.\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/a8d4ebd3-c90d-408d-ab10-0522f6ac15a9/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/a8d4ebd3-c90d-408d-ab10-0522f6ac15a9/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-26-d98fbac5c1@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné participates in roundtable with Mr Peter Burke Minister for Enterprise \, Tourism and Employment of Ireland together with Irish Business Associations
@@ -198,7 +206,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-26-a433eb47c4@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Mr Peter Burke\, Minister for Enterprise\, Tourism and Employment of  Ireland
@@ -207,7 +215,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-26-e2dc722831@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260526
 DTEND;VALUE=DATE:20260526
 SUMMARY:Executive Vice-President Séjourné meets Ms Helen McEntee\, Minister for Defence\, Foreign Affairs and Trade
@@ -216,7 +224,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-22-7cd6d0939b@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260522
 DTEND;VALUE=DATE:20260522
 SUMMARY:Executive Vice-President Séjourné participates in Foreign Affairs Council (Trade)
@@ -225,7 +233,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-05-21-93ab832cee@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260521
 DTEND;VALUE=DATE:20260521
 SUMMARY:Executive Vice-President Séjourné participates in working dinner with French Association of Large Companies (AFEP) Board
@@ -234,106 +242,168 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-27-1fbbd14bc3@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260427
 DTEND;VALUE=DATE:20260427
 SUMMARY:Séjourné meets SUEZ Group (SUEZ)
 LOCATION:Paris\, France
+DESCRIPTION:Enjeux industriels de l’économie circulaire\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/1d864faf-4f83-4190-a0ed-b2d84e25618c/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/1d864faf-4f83-4190-a0ed-b2d84e25618c/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-24-3423e68f66@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260424
 DTEND;VALUE=DATE:20260424
 SUMMARY:Séjourné meets The European Steel Association (EUROFER)
 LOCATION:PARIS
+DESCRIPTION:Steel industry competitiveness.\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/1fc617f6-2c60-4d83-a764-25f41933379a/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/1fc617f6-2c60-4d83-a764-25f41933379a/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-23-b053b2a6a5@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260423
 DTEND;VALUE=DATE:20260423
 SUMMARY:Séjourné meets Fédération Nationale des Syndicats d'Exploitants Agricoles (FNSEA)
 LOCATION:Bruxelles
+DESCRIPTION:Agriculture\, competitiveness and sustainability\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/ba5eaba9-e47f-4629-830a-e3f2c3690612/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/ba5eaba9-e47f-4629-830a-e3f2c3690612/minutes
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-04-23-397015a64f@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260423
+DTEND;VALUE=DATE:20260430
+SUMMARY:Mission: Paris\, Strasbourg
+LOCATION:Paris\, Strasbourg
+DESCRIPTION:Paris : Rendez-vous avec l'ambassadrice d'Australie en France\, avec Eurofer avec le Directeur Général de Suez et réunion avec la ministre déléguée chargée de l'intelligence artificielle et du numérique. Strasbourg : Participation au collège et à la session plénière du Parlement européen\, rendez-vous avec des députés européens.\nSource: EU Transparency Register (mission)
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-22-075326182d@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260422
 DTEND;VALUE=DATE:20260422
 SUMMARY:Séjourné meets European Association of Mining Industries\, Metal Ores & Industrial Minerals (Euromines)
 LOCATION:Bruxelles
+DESCRIPTION:Critical raw material and mining investment\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/9105f619-c6a5-4c89-9014-0ae742cab8a8/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/9105f619-c6a5-4c89-9014-0ae742cab8a8/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-20-c04895b335@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260420
 DTEND;VALUE=DATE:20260420
 SUMMARY:Séjourné meets Volkswagen Aktiengesellschaft (VOLKSWAGEN AG)
 LOCATION:Hannover\, Allemagne
+DESCRIPTION:Visite de la Gigafactory PowerCo à Salzgitter. Visite du PowerCenter\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/17e5b40e-52ea-49ac-97e4-3422dd7eabda/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/17e5b40e-52ea-49ac-97e4-3422dd7eabda/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-20-eef777d7e9@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260420
 DTEND;VALUE=DATE:20260420
 SUMMARY:Séjourné meets Salzgitter AG (SZAG)
 LOCATION:Hannover\, Allemagne
+DESCRIPTION:Visite du site qui est en pleine mutation et soutien à la transition de l'usine vers une production d'acier bas carbone.\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/fa2d7561-5a30-40aa-b7af-90f50f014ce0/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/fa2d7561-5a30-40aa-b7af-90f50f014ce0/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-20-75873a1cfa@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260420
 DTEND;VALUE=DATE:20260420
 SUMMARY:Séjourné meets The European Steel Association (EUROFER)
 LOCATION:paris
+DESCRIPTION:Steel industry competitiveness\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/35d9482b-dcb0-4409-b4d1-ec23a990abae/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/35d9482b-dcb0-4409-b4d1-ec23a990abae/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-17-f312342f36@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260417
 DTEND;VALUE=DATE:20260417
 SUMMARY:Séjourné meets LA POSTE
 LOCATION:Paris\, France
+DESCRIPTION:Enjeux du secteur postal européen\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/8ac2ae28-a1b1-415e-8a49-6f67122e0809/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/8ac2ae28-a1b1-415e-8a49-6f67122e0809/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-17-4c9e9dcd34@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260417
 DTEND;VALUE=DATE:20260417
 SUMMARY:Séjourné meets Air France-KLM (AFKL)
 LOCATION:Paris (France)
+DESCRIPTION:Compétitivité du secteur aérien\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/5afed637-9fb7-41a2-bfb6-f55d4764d90a/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/5afed637-9fb7-41a2-bfb6-f55d4764d90a/minutes
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-16-1aedc145f2@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260416
 DTEND;VALUE=DATE:20260416
 SUMMARY:Séjourné meets DASSAULT AVIATION
 LOCATION:Paris
+DESCRIPTION:Aerospace\, defense and industrial competitiveness\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/8b2e15ad-49f9-4f6b-9205-18a3b773a309/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/8b2e15ad-49f9-4f6b-9205-18a3b773a309/minutes
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-04-15-f37446a606@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260415
+DTEND;VALUE=DATE:20260421
+SUMMARY:Mission: Paris\, Hannover
+LOCATION:Paris\, Hannover
+DESCRIPTION:Réunions avec des représentants d'entreprises à Paris et Participation à la Hannover Messe.\nSource: EU Transparency Register (mission)
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-04-07-c14ec153d3@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260407
 DTEND;VALUE=DATE:20260407
 SUMMARY:Séjourné meets Confederazione Generale dell'Industria Italiana (Confindustria)
 LOCATION:Rome
+DESCRIPTION:European industrial competitiveness and business environment.\nSource: EU Transparency Register\nhttps://ec.europa.eu/transparency-initiative/meetings/data/meetings/40b62004-2d0c-41b3-b43a-bae38e508dba/minutes
+URL:https://ec.europa.eu/transparency-initiative/meetings/data/meetings/40b62004-2d0c-41b3-b43a-bae38e508dba/minutes
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-03-19-2f50800063@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260319
+DTEND;VALUE=DATE:20260324
+SUMMARY:Mission: Paris\, Vienna
+LOCATION:Paris\, Vienna
+DESCRIPTION:Paris : Rendez-vous avec la Ministre des Outre-mer et le Directeur général du groupe Bouygues Telecom. Vienne : Visite du site de l'usine Holcim\, table ronde avec la fédération des entreprises autrichiennes de l'industrie\, échanges avec le Ministre fédéral\, avec le Chancelier fédéral\, avec la Ministre des Affaires Etrangères.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-03-06-fe95e33ae0@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260306
+DTEND;VALUE=DATE:20260314
+SUMMARY:Mission: Paris\, Strasbourg\, Nice
+LOCATION:Paris\, Strasbourg\, Nice
+DESCRIPTION:Paris : Rendez-vous CEO Rio Tinto\, dirigeant d'une Start up AI et Commissaire au Haut Plan. Strasbourg : Participation à la réunion du collège\, débat en plénière et réunions avec les députés européens. Cannes : Participation au Marché International des Professionels de l'Immobilier à Cannes.\nSource: EU Transparency Register (mission)
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2026-03-04-5116d93930@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20260304
 DTEND;VALUE=DATE:20260304
 SUMMARY:Remarks by Executive Vice-Presidents Séjourné and Fitto and by Commissioner Tzitzikostas on the EU Industrial Maritime and Ports Strategies
@@ -343,8 +413,98 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_26_531
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2026-02-26-d26f11d8c1@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260226
+DTEND;VALUE=DATE:20260304
+SUMMARY:Mission: Paris\, Toronto
+LOCATION:Paris\, Toronto
+DESCRIPTION:Paris : Rendez-vous avec la Présidente de l'Association française des entreprises privées et avec le Président d'Aubert et Duval. Toronto : Bilatérales avec des ministres\, signature d'une lettre d'intention avec le Canada etparticipation au Sommet international des Ministres des mines.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-02-18-6ff7239e24@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260218
+DTEND;VALUE=DATE:20260221
+SUMMARY:Mission: Prague\, Paris
+LOCATION:Prague\, Paris
+DESCRIPTION:Prague : Réunion avec le Premier ministre tchèque et table ronde avec des chefs d'entreprises. Paris : Interview avec le magazine Toute L'Europe\, réunion avec un député national et avec la Ministre déléguée auprès de la ministre de la Transition écologique\, de la Biodiversité et des Négociations internationales sur le climat et la nature.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-02-03-14b7fba4e8@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260203
+DTEND;VALUE=DATE:20260211
+SUMMARY:Mission: Washington D.C.\, Paris\, Dunkerque
+LOCATION:Washington D.C.\, Paris\, Dunkerque
+DESCRIPTION:Réunion ministérielle sur les terres rares à Washington. Rendez-vous avec dirigeant d'entreprise et déjeuner de presse\, rendez-vous avec la Ministre de la transition écologique et du climat et avec un député national à Paris. Visite du site ArcelorMittal à Dunkerque.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-01-29-0ba61da815@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260129
+DTEND;VALUE=DATE:20260131
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Rendez-vous avec un député national\, enregistrement Presse\, Déjeuner avec la SNCF.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-01-26-95d6a78f5e@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260126
+DTEND;VALUE=DATE:20260128
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Déjeuner de presse et rendez-vous avec un dirigeant d'entreprise.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-01-19-f522bad7a6@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260119
+DTEND;VALUE=DATE:20260123
+SUMMARY:Mission: Strasbourg\, Davos
+LOCATION:Strasbourg\, Davos
+DESCRIPTION:Participation au collège de la session plénière de Janvier à Strasbourg et réunions au World Economic Forum à Davos.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-01-13-1cd469d364@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260113
+DTEND;VALUE=DATE:20260114
+SUMMARY:Mission: Sittard
+LOCATION:Sittard
+DESCRIPTION:Lancement de "The Critical Chemical Alliance" sur le site de Chemelot.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2026-01-07-a06d171307@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20260107
+DTEND;VALUE=DATE:20260110
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Conférence des Ambassadeurs : discours du Président de la République française. Participation à la 31ᵉ Conférence des Ambassadrices et des Ambassadeurs.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-12-18-c87de60d42@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251218
+DTEND;VALUE=DATE:20251220
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Rendez-vous avec l'Institut National de la Santé et de la Recherche Médicale\, rendez-vous avec une ancienne députée européenne\, réunion avec la Fédération Bancaire Française.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-12-17-8e3db0a6ec@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20251217
 DTEND;VALUE=DATE:20251217
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioners Hoekstra at the press conference on the Clean Industrial Deal Package (including CBAM)
@@ -355,7 +515,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2025-12-16-e519963ea0@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20251216
 DTEND;VALUE=DATE:20251216
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioners Hoekstra\, Tzitzikostas and Dombrovskis at the press conference on the Automotive package
@@ -365,8 +525,18 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_25_3092
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2025-12-11-965a6dc450@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251211
+DTEND;VALUE=DATE:20251218
+SUMMARY:Mission: Paris\, Strasbourg
+LOCATION:Paris\, Strasbourg
+DESCRIPTION:Paris : rencontre avec l'Union Sociale pour l'Habitat. Strasbourg : participation à la réunion du collège\, participation à la session plénière du Parlement européen\, débat en plénière.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-12-03-b2a35d9c7b@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20251203
 DTEND;VALUE=DATE:20251203
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioner Šefčovič on the Economic Security Package
@@ -376,8 +546,88 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_25_2909
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2025-12-03-5106ff4c99@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251203
+DTEND;VALUE=DATE:20251206
+SUMMARY:Mission: Tallinn\, Paris
+LOCATION:Tallinn\, Paris
+DESCRIPTION:Tallin : Rencontre avec le Premier Ministre d'Estonie\, visite d'une usine d'aimants\, conférence de presse. Paris : Rendez-vous avec le Président de Sanofi\, Déjeuner de presse du groupe Dominique Seux\, Rendez-vous avec les Rencontres Economiques d'Aix et le Groupe TF1.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-11-19-64abf393b3@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251119
+DTEND;VALUE=DATE:20251203
+SUMMARY:Mission: Johannesburg\, Mbombela\, Strasbourg\, Stuttgart\, Paris
+LOCATION:Johannesburg\, Mbombela\, Strasbourg\, Stuttgart\, Paris
+DESCRIPTION:Afrique du Sud : participation au G20\, visite d'un site minier. Strasbourg : participation à la session plénière de Novembre\, réunion du Collège. Stuttgart : participation au dialogue stratégique sur l'automobile. Paris : rendez-vous avec des dirigeants d'entreprise.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-11-12-ce416db62a@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251112
+DTEND;VALUE=DATE:20251119
+SUMMARY:Mission: Buenos Aires\, Paris
+LOCATION:Buenos Aires\, Paris
+DESCRIPTION:Argentine : participation à une conférence industrielle; rencontre avec le Président\, le Ministre des Affaires Etrangères et le Secrétaire de coordination pour l'Energie et les Mines. Paris : Rendez-vous dirigeant d'entreprise et participation au dîner "Choose France".\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-11-10-ab7a7a3953@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251110
+DTEND;VALUE=DATE:20251111
+SUMMARY:Mission: Milan
+LOCATION:Milan
+DESCRIPTION:Participation à l' "Annual event Italian Steel Federation" (Federacciai)\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-10-29-832e72f213@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251029
+DTEND;VALUE=DATE:20251104
+SUMMARY:Mission: Lisbon\, Paris\, Berlin\, Bratislava
+LOCATION:Lisbon\, Paris\, Berlin\, Bratislava
+DESCRIPTION:Lisbonne : Rencontres avec les autorités portugaises\, réunions avec des dirigeants d'entreprise\, interview avec la télévision publique. Paris : Rendez-vous avec des dirigeants d'entreprise. Berlin: Participation à la conférence Friends of Industry. Bratislava : Table-ronde sur la compétitivité.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-10-23-0ac930c3ff@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251023
+DTEND;VALUE=DATE:20251025
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Réunion avec l'Association Française de Commercialisation et de Mélange d'Engrais\, déjeuner avec la Ministre déléguée aux Affaires Intérieures.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-10-16-8e74c93b7b@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251016
+DTEND;VALUE=DATE:20251023
+SUMMARY:Mission: Paris\, Strasbourg
+LOCATION:Paris\, Strasbourg
+DESCRIPTION:Paris : Rendez vous avec ORANO\, avec le Ministre de l’Economie\, des Finances et de la Souveraineté Industrielle et Energétique\, avec le Ministre délégué en charge de l'Industrie. Réunions avec le groupe de journalistes "Despré" et avec Coop FR (organisation représentative des entreprises coopératives françaises). Strasbourg - Session plénière du Parlement européen\, réunion du Collège.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-10-13-5531b65921@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251013
+DTEND;VALUE=DATE:20251016
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Auditions devant le Sénat et l'assemblée nationale et participation à une table ronde sur les cosmétiques.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-10-07-3ae2e4b32f@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20251007
 DTEND;VALUE=DATE:20251007
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioner Šefčovič on the proposal to protect the EU steel sector from unfair impacts of global steel overcapacity
@@ -387,8 +637,48 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_25_2308
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2025-10-06-766c354046@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251006
+DTEND;VALUE=DATE:20251011
+SUMMARY:Mission: Strasbourg\, Dunkerque
+LOCATION:Strasbourg\, Dunkerque
+DESCRIPTION:Session plénière du Parlement européen\, débat dans l'hémicycle - Participation à la réunion du Collège - Rendez-vous avec les députés - Read out et conférence de presse - Rencontre avec le Premier Ministre du Groenland - audition commission spéciale Housing. Visite à Dunkerque: Rencontre avec les élus locaux et visite de l'aciérie ArcelorMittal.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-10-01-a7fe7241d2@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20251001
+DTEND;VALUE=DATE:20251004
+SUMMARY:Mission: Madrid\, Paris
+LOCATION:Madrid\, Paris
+DESCRIPTION:Madrid : Rencontre avec les autorités espagnoles\, participation au New Economy Forum\, commission mixte au Cortes\, interview Télévision espagnole. Paris : Rendez-vous avec le Cimentier VICAT\, le ministre délégué chargé de l'Europe.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-09-24-ecb2b689e8@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250924
+DTEND;VALUE=DATE:20250927
+SUMMARY:Mission: Stockholm\, Kiruna\, Paris
+LOCATION:Stockholm\, Kiruna\, Paris
+DESCRIPTION:Visite en Suède : rencontre avec les autorités à Stockholm et visite d'une mine de minerai de fer à Kiruna. Paris : Rencontre avec le directeur général du groupe Amundi\, rendez-vous avec le Directeur de Sciences Politiques et échange avec le Président de la commission des affaires européennes à l'Assemblée nationale.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-09-22-41a75687f7@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250922
+DTEND;VALUE=DATE:20250924
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Rencontre avec le Président de la Confindustria\, l'Administratrice générale du Commissariat à l'Energie Atomique\, rendez-vous avec le Président de la Caisse des dépôts\, avec le Chief Executive Officer de la société Razel-BEC\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-09-18-266b302f64@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20250918
 DTEND;VALUE=DATE:20250918
 SUMMARY:Joint press release by Minister of Economy\, Trade and Industry Yoji Muto and Executive vice-president of the European Commission for industrial strategy and prosperity Stéphane Séjourné.
@@ -398,8 +688,48 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/statement_25_2132
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2025-09-14-bc403c88e0@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250914
+DTEND;VALUE=DATE:20250919
+SUMMARY:Mission: Osaka\, Tokyo
+LOCATION:Osaka\, Tokyo
+DESCRIPTION:Visite Institutionnelle avec les autorités locales et visite d'entreprises à Tokyo. Visite de l'exposition universelle à Osaka.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-09-05-6697a5bb73@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250905
+DTEND;VALUE=DATE:20250912
+SUMMARY:Mission: Evian Les Bains\, Paris\, Strasbourg\, Munich
+LOCATION:Evian Les Bains\, Paris\, Strasbourg\, Munich
+DESCRIPTION:Evian : Participation aux rencontres Franco-allemandes. Paris : Réunion avec le Directeur général de Véolia\, rendez-vous avec le Président de OVHcloud\, rendez-vous avec la Maire de Paris. Strasbourg : participation à la session plénière de septembre 2025\, Réunions avec les députés européens\, participation au collège et débat en plénière (Etat de l'Union). Munich : Participation au salon de l'automobile.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-08-27-58396e6a35@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250827
+DTEND;VALUE=DATE:20250828
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Participation à l'Université d'été du MEDEF - Présentation du nouveau cadre financier pluriannuel\, du Clean Industrial Deal\, du plan d'action de la chimie\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-07-17-6391286caa@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250717
+DTEND;VALUE=DATE:20250719
+SUMMARY:Mission: Copenhagen
+LOCATION:Copenhagen
+DESCRIPTION:Participation au Conseil informel sur la compétitivité organisé par la présidence danoise - Conférence de presse.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-07-16-d555776509@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20250716
 DTEND;VALUE=DATE:20250716
 SUMMARY:Remarks by Executive Vice-President Séjourné on the European Competitiveness Fund as part of the new MFF
@@ -410,7 +740,7 @@ STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
 UID:2025-07-08-9755adfcd8@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20250708
 DTEND;VALUE=DATE:20250708
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioner Roswall on the Chemicals package
@@ -420,14 +750,284 @@ URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_25_1772
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
+UID:2025-07-07-95f18c2590@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250707
+DTEND;VALUE=DATE:20250715
+SUMMARY:Mission: Strasbourg\, Ottawa\, Paris
+LOCATION:Strasbourg\, Ottawa\, Paris
+DESCRIPTION:Strasbourg : Réunion du collège et participation à la session plénière du Parlement européen de juillet. Ottawa : réunion avec les autorités locales et visite d'un site de graphite. Paris : défilé du 14 juillet\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-07-03-ea315aa507@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250703
+DTEND;VALUE=DATE:20250705
+SUMMARY:Mission: Aarhus
+LOCATION:Aarhus
+DESCRIPTION:Visite du Collège à Aarhus au Danemark.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-06-26-942e1cb8dc@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250626
+DTEND;VALUE=DATE:20250701
+SUMMARY:Mission: Paris\, Louviers
+LOCATION:Paris\, Louviers
+DESCRIPTION:PARIS : Rendez-vous avec le Ministre français de l'Economie et des Finances\, dîner avec la Présidente de l'Association Française des Entreprises Privées\, rendez-vous avec l'Alliance de la Presse\, rendez-vous avec les sociétés ARKEMA\, EDF et la Confédération générale du travail (CGT). Le Vaudreuil : Visite de la Société Schneider Electric\, participation aux 100 ans de la Fédération des Industries Électriques\, Électroniques et de Communication et au Conseil de l'association représentant les industries technologiques européennes (Orgalim).\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-06-23-025520af11@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250623
+DTEND;VALUE=DATE:20250625
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Paris : Rendez-vous avec le Président du groupe Modem et participation à la réunion de groupe "Ensemble Pour la République"\, à l'assemblée nationale.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-06-11-95cef42ced@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250611
+DTEND;VALUE=DATE:20250621
+SUMMARY:Mission: Helsinki\, Kemi\, Le Bourget\, Strasbourg\, Marseille\, Paris
+LOCATION:Helsinki\, Kemi\, Le Bourget\, Strasbourg\, Marseille\, Paris
+DESCRIPTION:Helsinki : Rencontre avec le Premier Ministre\, visite de l'agence européenne des produits chimiques (ECHA)\, bilatérale avec le Ministre des affaires économiques. Kemi : Visite d'une bioraffinerie (MetsäGroup). Le Bourget : Inauguration du salon de l'aéronautique au Bourget\, rencontres avec les équipementiers de l'aéronautique. Strasbourg : Participation à la réunion du Collège et intervention en séance plénière. Marseille : Bilatérale avec le Maire de Marseille\, visite du site Tangram de CMA CGM\, bilatérale avec le Président de la région. Paris : Conférence Jaques Delors à la Banque de France\, rendez-vous avec le Gouverneur de la Banque de France\, rendez-vous avec le Secrétaire Général de la Présidence de la République française.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-06-04-95f84fd835@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250604
+DTEND;VALUE=DATE:20250606
+SUMMARY:Mission: Rzeszow
+LOCATION:Rzeszow
+DESCRIPTION:Rzeszów: Participation in the EU Industry Days\, bilateral meeting with Polish Minister of Economic Development and Technology and with Basque Industry Minister.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
 UID:2025-05-28-3b08c5a06f@sejourn-eu
-DTSTAMP:20260721T134532Z
+DTSTAMP:20260721T140100Z
 DTSTART;VALUE=DATE:20250528
 DTEND;VALUE=DATE:20250528
 SUMMARY:Remarks by Executive Vice-President Séjourné and Commissioner Zaharieva on the EU Startup and Scaleup Strategy
 LOCATION:
 DESCRIPTION:Speech\nSource: EC Presscorner\nhttps://ec.europa.eu/commission/presscorner/detail/en/speech_25_1363
 URL:https://ec.europa.eu/commission/presscorner/detail/en/speech_25_1363
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-05-22-96116ff622@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250522
+DTEND;VALUE=DATE:20250528
+SUMMARY:Mission: Paris\, Berlin
+LOCATION:Paris\, Berlin
+DESCRIPTION:Paris : rencontre avec le secteur privé : rendez-vous avec Air France\, avec la Ministre déléguée chargée du Commerce\, de l'Artisanat\, des PME et de l'Économie sociale et solidaire\, échange avec Grégory Besson-Moreau\, député national. Berlin : visite d'une entreprise et rencontres avec les autorités\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-05-14-e3c8942528@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250514
+DTEND;VALUE=DATE:20250517
+SUMMARY:Mission: Catania\, Paris
+LOCATION:Catania\, Paris
+DESCRIPTION:Sicile : visite de la gigafactory 3SUN (groupe ENEL SpA). Paris : rendez-vous avec le groupe SEB et avec L'Oréal et participation au Sommet sur la mesure de l'Impact organisé par le Comité Economique Social et Environnemental.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-04-29-0bf6390862@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250429
+DTEND;VALUE=DATE:20250509
+SUMMARY:Mission: Paris\, Strasbourg
+LOCATION:Paris\, Strasbourg
+DESCRIPTION:Paris : Audition à l'Assemblée nationale\, participation au lancement de « Choose Europe for Science » à La Sorbonne\, rendez-vous avec le Ministre français de l'Industrie et de l'Energie. Strasbourg : participation à la réunion du Collège et à la session plénière.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-04-03-b5673ceb8d@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250403
+DTEND;VALUE=DATE:20250405
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Paris : Rendez-vous avec les présidents d'Electra\, d'Air Liquide et de La Poste.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-03-26-b207431357@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250326
+DTEND;VALUE=DATE:20250403
+SUMMARY:Mission: Athens\, Paris\, Strasbourg
+LOCATION:Athens\, Paris\, Strasbourg
+DESCRIPTION:Athènes : Rencontre avec le Premier Ministre Mitsotakis. Agios Nikolaos\, Viotia : Visite de la mine de gallium Metlen. Paris : Rendez-vous avec le Président Directeur Général de la Chambre des Métiers et Artisanat et la Présidente de la Confédération Française Démocratique du Travail. Strasbourg : Participation à la réunion du Collège et débat dans l'hémicycle - rencontre avec les présidents de groupe du Parlement européen.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-03-20-ba1954f773@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250320
+DTEND;VALUE=DATE:20250325
+SUMMARY:Mission: Duisburg\, Paris
+LOCATION:Duisburg\, Paris
+DESCRIPTION:Duisburg : Visite de l'usine Thyssenkrupp. Paris : Rendez-vous avec Mistral AI et Bolloré Logistics\, rendez-vous avec des CEO français d'entreprises étrangères.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-03-06-3f99d31c3f@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250306
+DTEND;VALUE=DATE:20250315
+SUMMARY:Mission: Paris\, Strasbourg\, Barcelona
+LOCATION:Paris\, Strasbourg\, Barcelona
+DESCRIPTION:Paris : Participation au Youth Dialogue\, rendez-vous avec le président du Groupe Iliad. Strasbourg : Participation à la réunion du Collège et à la session plénière du Parlement européen. Barcelone : Rendez-vous avec les autorités locales et visite de sites industriels.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-03-05-8282b27196@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250305
+DTEND;VALUE=DATE:20250306
+SUMMARY:Mission: Douai
+LOCATION:Douai
+DESCRIPTION:Visite du Site Renault à Douai\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-26-d4333e875b@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250226
+DTEND;VALUE=DATE:20250304
+SUMMARY:Mission: Antwerp\, Delhi
+LOCATION:Antwerp\, Delhi
+DESCRIPTION:Lancement du Clean Industrial Deal à Anvers (European Industry Summit 2025 - Clean Industrial Deal) devant les entreprises du secteur industriel. Visite du Collège à New Delhi.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-23-488ebafb45@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250223
+DTEND;VALUE=DATE:20250226
+SUMMARY:Mission: Kyiv
+LOCATION:Kyiv
+DESCRIPTION:Visite du Collège à Kiev\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-20-68ef49635f@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250220
+DTEND;VALUE=DATE:20250222
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Rendez-vous avec les autorités et des dirigeants de l'industrie.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-13-c7ff8b9df5@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250213
+DTEND;VALUE=DATE:20250215
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Séminaire du Cabinet à Paris.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-05-63a3b82024@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250205
+DTEND;VALUE=DATE:20250214
+SUMMARY:Mission: Gdansk\, Paris\, Strasbourg\, Flamanville
+LOCATION:Gdansk\, Paris\, Strasbourg\, Flamanville
+DESCRIPTION:GDANSK : Ouverture de la Présidence polonaise avec le collège de la Commission européenne à Gdansk et visites du chantier naval de Gdansk. PARIS : Rencontres avec les autorités et des dirigeants de l'Industrie. Participation au sommet sur l'intelligence artificielle. Strasbourg : Participation à la réunion du Collège et débat en session plénière. Flamanvile : Visite du réacteur à eau pressurisée.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-02-03-52f78ffd3b@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250203
+DTEND;VALUE=DATE:20250205
+SUMMARY:Mission: Warsaw
+LOCATION:Warsaw
+DESCRIPTION:Conseil Compétitivité à Varsovie - organisé par la présidence polonaise du Consei. Réunion bilatérale avec le Ministre de l'Economie\, du Développement et de la Technologie.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-01-30-5f92490ade@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250130
+DTEND;VALUE=DATE:20250201
+SUMMARY:Mission: Jodoigne
+LOCATION:Jodoigne
+DESCRIPTION:Séminaire du Collège à Jodoigne\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-01-21-c1aeeda7f4@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250121
+DTEND;VALUE=DATE:20250128
+SUMMARY:Mission: Davos\, Paris\, Bilbao\, Luxembourg
+LOCATION:Davos\, Paris\, Bilbao\, Luxembourg
+DESCRIPTION:Davos : rencontres avec des stakeholders énergies et télécoms Paris : rencontre dirigeants industrie et autorités Bilbao : rencontre autorités Luxembourg : Audience solennelle d'engagement devant la Cour européenne de Justice\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-01-15-775e75ad3d@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250115
+DTEND;VALUE=DATE:20250118
+SUMMARY:Mission: Stuttgart\, Paris
+LOCATION:Stuttgart\, Paris
+DESCRIPTION:Stuttgart : Rencontre avec le Ministre Président\, visite de constructeurs et équipementiers automobiles\, participation à un événement automobile à la mairie de Stuttgart. Paris : Réunion avec la Présidente d'Euronext - Dejeuner avec le groupe presse de Pauline Theveniaud - Rendez-vous avec Pascal Canfin\, député européen - Rendez-vous avec Pouria Amirshahi\, député national.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2025-01-08-57068fc7e5@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20250108
+DTEND;VALUE=DATE:20250111
+SUMMARY:Mission: Bucharest\, Paris
+LOCATION:Bucharest\, Paris
+DESCRIPTION:Bucarest : Rencontres avec les autorités et parties prenantes. Visite de l'Institut Roumain pour la Recherche Aérospatiale (INCAS). Paris : Echanges avec les autorités et dirigeant d'industrie.\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2024-12-19-822fbdf8cb@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20241219
+DTEND;VALUE=DATE:20241221
+SUMMARY:Mission: Paris\, Roissy-En-France
+LOCATION:Paris\, Roissy-En-France
+DESCRIPTION:Visit of the Customs facilities in Roissy Charles de Gaulle - Exchange with Custom officers and responsible of the Customs facilities\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2024-12-11-70486a4215@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20241211
+DTEND;VALUE=DATE:20241219
+SUMMARY:Mission: Milan\, Paris\, Strasbourg
+LOCATION:Milan\, Paris\, Strasbourg
+DESCRIPTION:Milan - rencontre avec la Confidustria - rencontre avec le Ministre Urso - visit d'un site d'une industrie de la chimie (SYENSQO) Paris - meeting national authorities and associations Strasbourg - attending the pleanary session and the college\nSource: EU Transparency Register (mission)
+STATUS:CONFIRMED
+END:VEVENT
+BEGIN:VEVENT
+UID:2024-12-05-bc4b3fe5d2@sejourn-eu
+DTSTAMP:20260721T140100Z
+DTSTART;VALUE=DATE:20241205
+DTEND;VALUE=DATE:20241210
+SUMMARY:Mission: Paris
+LOCATION:Paris
+DESCRIPTION:Meeting with French authorities in European Commission Representation\, participation in the Conseil national - Paris\nSource: EU Transparency Register (mission)
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR
