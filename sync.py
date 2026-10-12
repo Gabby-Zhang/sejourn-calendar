@@ -1221,7 +1221,7 @@ def _fmt_event_line(e: dict) -> str:
     # Full title: EC titles carry the useful detail at the end (dates, org names),
     # and ntfy wraps long lines fine.
     line  = f"{badge} {e['date']}  {e['title']}"
-    extra = e.get("location") or e.get("subject")
+    extra = e.get("location") or re.sub(r"\[[A-Z_]+\]\s*", "", e.get("subject", ""))
     if extra:
         line += f"\n     {extra[:120]}"
     return line
