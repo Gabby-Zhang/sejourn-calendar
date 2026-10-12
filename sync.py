@@ -39,7 +39,8 @@ import time
 import unicodedata
 import urllib.parse
 import zipfile
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
@@ -92,8 +93,12 @@ EBS_DETAIL = "https://audiovisual.ec.europa.eu/en/event/"
 # it never pollutes the subscribable calendar with non-event chatter.
 GOOGLE_NEWS_RSS = (
     "https://news.google.com/rss/search?"
-    "q=%22S%C3%A9journ%C3%A9%22&hl=en-US&gl=US&ceid=US:en"
+    "q=%22S%C3%A9journ%C3%A9%22+when:2d&hl=en-US&gl=US&ceid=US:en"
 )
+# Google News RSS is sorted by relevance, not date, and keeps resurfacing old
+# articles (sometimes with a re-worded title). Only articles published within
+# this window notify; older ones are recorded silently.
+NEWS_MAX_AGE_HOURS = 48
 
 NTFY_TOPIC  = os.environ.get("NTFY_TOPIC", "ss-calendar-update")
 STATE_FILE  = Path("sync_state.json")
@@ -800,6 +805,35 @@ def _fmt_event_line(e: dict) -> str:
     return line
 
 
+def ntfy_post(title: str, message: str, priority: int, tags: list) -> bool:
+    """Publish via ntfy's JSON API.
+
+    HTTP headers are latin-1, so a 'Title' header with é arrives as 'S�journ�';
+    the JSON body is UTF-8 end to end.
+    """
+    try:
+        resp = requests.post(
+            "https://ntfy.sh/",
+            json={"topic": NTFY_TOPIC, "title": title, "message": message,
+                  "priority": priority, "tags": tags},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        return True
+    except requests.RequestException as e:
+        print(f"ntfy publish failed: {e}")
+        return False
+
+
+def _news_title_key(title: str) -> str:
+    """Normalised title: drop the ' - Source' suffix, accents, case, punctuation,
+    so the same story re-listed by Google News with small edits dedups."""
+    t = re.sub(r"\s+[-–—|]\s+[^-–—|]{1,60}$", "", title)
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode().lower()
+    t = re.sub(r"[^a-z0-9]+", " ", t).strip()
+    return "news|" + hashlib.md5(t.encode("utf-8")).hexdigest()[:12]
+
+
 def push_notification(new_events: list):
     if not NTFY_TOPIC or not new_events:
         return
@@ -830,20 +864,9 @@ def push_notification(new_events: list):
     if count > 6:
         details += f"\n…and {count - 6} more"
 
-    try:
-        requests.post(
-            f"https://ntfy.sh/{NTFY_TOPIC}",
-            data=(summary + "\n\n" + details).encode("utf-8"),
-            headers={
-                "Title": "Sejourn - EU Commission",
-                "Priority": "high" if upcoming else "default",
-                "Tags": "calendar,eu",
-            },
-            timeout=10,
-        )
+    if ntfy_post("Séjourné - EU Commission", summary + "\n\n" + details,
+                 priority=4 if upcoming else 3, tags=["calendar", "eu"]):
         print(f"Push notification sent → ntfy:{NTFY_TOPIC}")
-    except requests.RequestException as e:
-        print(f"Push notification failed: {e}")
 
 
 def notify_news(state: dict) -> int:
@@ -851,7 +874,7 @@ def notify_news(state: dict) -> int:
 
     Deliberately NOT written to the ICS: these are press mentions, not events.
     State keys are namespaced ('news|…') so they never collide with calendar
-    events. Returns the number of newly-seen articles (mutates `state`).
+    events. Returns the number of newly-recorded articles (mutates `state`).
     """
     if not NTFY_TOPIC:
         return 0
@@ -862,43 +885,47 @@ def notify_news(state: dict) -> int:
         print(f"[News] fetch failed: {e}")
         return 0
 
-    new = []
+    now     = datetime.now(timezone.utc)
+    new     = []
+    n_stale = 0
     for block in re.findall(r"<item>(.*?)</item>", resp.text, re.S)[:40]:
         tm = re.search(r"<title>(.*?)</title>", block, re.S)
         lm = re.search(r"<link>(.*?)</link>", block, re.S)
+        pm = re.search(r"<pubDate>(.*?)</pubDate>", block, re.S)
         title = html.unescape(re.sub(r"<[^>]+>", "", tm.group(1)).strip()) if tm else ""
         link  = re.sub(r"<[^>]+>", "", lm.group(1)).strip() if lm else ""
         if not mentions_sejourne(title):
             continue
-        key = "news|" + hashlib.md5(title.encode("utf-8")).hexdigest()[:12]
-        if key in state:
+        # Old-style key (raw title hash) is still checked so articles already
+        # seen before the normalised key existed don't re-notify.
+        raw_key = "news|" + hashlib.md5(title.encode("utf-8")).hexdigest()[:12]
+        key     = _news_title_key(title)
+        if key in state or raw_key in state:
             continue
         state[key] = datetime.now().isoformat()
+        try:
+            published = parsedate_to_datetime(pm.group(1).strip()) if pm else None
+        except (TypeError, ValueError):
+            published = None
+        # No/unparseable date → treat as stale rather than risk an old alert.
+        if published is None or now - published > timedelta(hours=NEWS_MAX_AGE_HOURS):
+            n_stale += 1
+            continue
         new.append((title, link))
 
+    if n_stale:
+        print(f"[News] {n_stale} older article(s) recorded without notifying.")
     if not new:
         print("[News] no new articles.")
-        return 0
+        return n_stale
 
     body = "\n\n".join(f"📰 {t[:90]}\n{l}" for t, l in new[:6])
     if len(new) > 6:
         body += f"\n…and {len(new) - 6} more"
-    try:
-        requests.post(
-            f"https://ntfy.sh/{NTFY_TOPIC}",
-            data=(f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n"
-                  + body).encode("utf-8"),
-            headers={
-                "Title": "Séjourné - in the news",
-                "Priority": "low",
-                "Tags": "newspaper",
-            },
-            timeout=10,
-        )
+    msg = f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n" + body
+    if ntfy_post("Séjourné - in the news", msg, priority=2, tags=["newspaper"]):
         print(f"[News] notified {len(new)} new article(s).")
-    except requests.RequestException as e:
-        print(f"[News] notify failed: {e}")
-    return len(new)
+    return len(new) + n_stale
 
 
 # ── Main ───────────────────────────────────────────────────────────────────────
