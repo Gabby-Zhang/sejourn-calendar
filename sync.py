@@ -89,6 +89,17 @@ EBS_API = ("https://8hwk2cyeyb.execute-api.eu-west-1.amazonaws.com"
            "/parrotfish-prod/search")
 EBS_DETAIL = "https://audiovisual.ec.europa.eu/en/event/"
 
+# EU Audiovisual Service photo/video library — his team often doesn't put
+# things on the official agenda, but the EC photographers still cover them and
+# caption each reportage with the exact activity. Past events only (photos are
+# taken on the day); fills the gaps in the agenda. Same internal Solr API the
+# photo-monitor repo uses: no server-side keyword filter, match client-side.
+EUAV_API     = "https://gfdwwnbuul.execute-api.eu-west-1.amazonaws.com/avsportal/avsportal"
+EUAV_PHOTO   = "https://audiovisual.ec.europa.eu/en/media/photo/"
+EUAV_VIDEO   = "https://audiovisual.ec.europa.eu/en/media/video/"
+EUAV_PERSON  = "241448"      # EU AV person id for Stéphane Séjourné (pers_json)
+EUAV_TAG     = "[EU_AV]"     # marker in DESCRIPTION; sa-archive / news monitor read it
+
 # Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
 # it never pollutes the subscribable calendar with non-event chatter.
 GOOGLE_NEWS_RSS = (
@@ -134,6 +145,7 @@ SOURCE_BADGE = {
     "press":        "🎤",
     "mission":      "✈️",
     "ebs":          "📺",
+    "euav":         "📷",
 }
 
 
@@ -349,6 +361,9 @@ def scrape_from_ics() -> list:
         location = ""
         start_dt = ""        # timed    YYYYMMDDTHHMMSSZ
         end_dt   = ""
+        dtend    = ""        # all-day exclusive end YYYYMMDD
+        desc     = ""
+        url      = ""
         for line in re.split(r"\r\n|\n", block):
             if line.startswith("SUMMARY:"):
                 summary = line[8:].replace("\\,", ",").replace("\\n", "\n").strip()
@@ -358,8 +373,14 @@ def scrape_from_ics() -> list:
                 start_dt = line[8:].strip()
             elif line.startswith("DTEND:"):
                 end_dt = line[6:].strip()
+            elif line.startswith("DTEND;VALUE=DATE:"):
+                dtend = line[17:].strip()
             elif line.startswith("LOCATION:"):
                 location = line[9:].replace("\\,", ",").strip()
+            elif line.startswith("DESCRIPTION:") and not desc:
+                desc = line[12:].strip()      # first one = event's, not an alarm's
+            elif line.startswith("URL:"):
+                url = line[4:].strip()
 
         # Derive the calendar date from whichever DTSTART form is present.
         if re.match(r"\d{8}T\d{6}", start_dt):
@@ -382,8 +403,13 @@ def scrape_from_ics() -> list:
             "status":   status,
             "source":   "ics",
             "subject":  "",
-            "url":      "",
+            "url":      url,
+            "ics_desc": desc,     # already ICS-escaped; re-emitted verbatim
         }
+        if len(dtend) == 8 and len(dtstart) == 8 and dtend > dtstart:
+            # multi-day all-day (missions): exclusive DTEND → inclusive date_end
+            ev["date_end"] = (datetime.strptime(dtend, "%Y%m%d")
+                              - timedelta(days=1)).strftime("%Y-%m-%d")
         if start_dt:                      # preserve timed events' clock times
             ev["start_dt"] = start_dt
             ev["end_dt"]   = end_dt
@@ -605,6 +631,69 @@ def scrape_from_ebs() -> list:
     return events
 
 
+# ── Strategy 7: EU Audiovisual photo/video library ─────────────────────────────
+
+def _euav_text(field) -> str:
+    if isinstance(field, dict):
+        raw = field.get("EN") or field.get("FR") or next(iter(field.values()), "")
+    else:
+        raw = field or ""
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(str(raw)))).strip()
+
+
+def scrape_from_euav() -> list:
+    """Activities captured by EC photographers/camera crews (REPORTAGE/PHOTO/VIDEO).
+
+    Matched by his tagged person id OR his name in title/summary. One event per
+    reportage/video (PHOTO items collapse onto their parent reportage ref).
+    """
+    by_ref = {}
+    for media_type in ("REPORTAGE", "PHOTO", "VIDEO"):
+        try:
+            resp = requests.get(EUAV_API, params={
+                "fl": "type,ref,doc_ref,titles_json,summary_json,shootstartdate,pers_json",
+                "hasMedia": 1, "wt": "json", "index": 1,
+                "pagesize": 100, "type": media_type,
+            }, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+            docs = resp.json().get("response", {}).get("docs", []) or []
+        except (requests.RequestException, ValueError) as e:
+            print(f"[EU AV:{media_type}] fetch failed: {e}")
+            continue
+
+        for doc in docs:
+            title   = _euav_text(doc.get("titles_json"))
+            summary = _euav_text(doc.get("summary_json"))
+            tagged  = any(str(p.get("id", "")) == EUAV_PERSON
+                          for p in (doc.get("pers_json") or []) if isinstance(p, dict))
+            if not (tagged or mentions_sejourne(title + " " + summary)):
+                continue
+            m = re.match(r"(\d{4})(\d{2})(\d{2})", str(doc.get("shootstartdate", "")))
+            if not m or not title:
+                continue
+            ref = doc.get("doc_ref") or str(doc.get("ref", "")).split("/")[0]
+            if not ref or ref in by_ref:
+                continue
+            by_ref[ref] = {
+                "title":    title[:200],
+                "date":     "-".join(m.groups()),
+                "location": "",
+                "status":   "past",
+                "source":   "euav",
+                "subject":  "",
+                "url":      (EUAV_VIDEO if media_type == "VIDEO" else EUAV_PHOTO) + ref,
+            }
+
+    today  = date.today().isoformat()
+    events = []
+    for ev in by_ref.values():
+        if ev["date"] >= today:
+            ev["status"] = "ongoing" if ev["date"] == today else "upcoming"
+        events.append(ev)
+    print(f"[EU AV] {len(events)} photo/video reportages featuring Séjourné.")
+    return events
+
+
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
 
 # Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
@@ -661,6 +750,40 @@ def drop_transparency_duplicates(events: list) -> list:
     return out
 
 
+_EUAV_STOPWORDS = _DEDUP_STOPWORDS | {
+    "sejourne", "stephane", "executive", "vice", "commission", "commissioner",
+    "meets", "meeting", "visit", "participation", "with", "from", "their",
+    "prosperity", "industrial", "strategy", "other",
+}
+
+
+def _title_tokens(title: str) -> set:
+    t = unicodedata.normalize("NFKD", title).encode("ascii", "ignore").decode().lower()
+    return {w for w in re.findall(r"[a-z0-9]+", t)
+            if len(w) >= 4 and w not in _EUAV_STOPWORDS}
+
+
+def drop_euav_duplicates(events: list) -> list:
+    """Drop a photo-library event when another event the same day is clearly the
+    same activity (≥2 shared distinctive words). Photo captions only fill gaps;
+    the agenda/meeting entry is the canonical one. Also collapses a reportage and
+    its video of the same activity."""
+    def is_photo(e):
+        return e.get("source") == "euav" or EUAV_TAG in e.get("ics_desc", "")
+
+    out, kept_by_date = [], {}
+    # Non-photo events first so they're the anchors.
+    for e in sorted(events, key=is_photo):
+        if is_photo(e):
+            toks = _title_tokens(e["title"])
+            if any(len(toks & other) >= 2 for other in kept_by_date.get(e["date"], [])):
+                print(f"[dedup] drop EU AV dup: {e['date']} {e['title'][:70]}")
+                continue
+        kept_by_date.setdefault(e["date"], []).append(_title_tokens(e["title"]))
+        out.append(e)
+    return out
+
+
 # ── Merge all sources ───────────────────────────────────────────────────────────
 
 def collect_all_events() -> list:
@@ -669,6 +792,7 @@ def collect_all_events() -> list:
     press_events   = scrape_from_presscorner()
     mission_events = scrape_from_missions()
     ebs_events     = scrape_from_ebs()
+    euav_events    = scrape_from_euav()
     ics_events     = scrape_from_ics()
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
@@ -676,12 +800,13 @@ def collect_all_events() -> list:
     # copy so its precise start/end times survive the merge.
     merged = {}
     for ev in (web_events + reg_events + press_events + mission_events
-               + ebs_events + ics_events):
+               + ebs_events + euav_events + ics_events):
         k = f"{ev['date']}|{ev['title']}"
         if k not in merged:
             merged[k] = ev
 
     out = drop_transparency_duplicates(list(merged.values()))
+    out = drop_euav_duplicates(out)
     out.sort(key=lambda e: e["date"], reverse=True)
     print(f"[Total] {len(out)} unique Séjourné events after merging + dedup.")
     return out
@@ -741,9 +866,13 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: EC Presscorner")
         elif ev.get("source") == "ebs":
             desc_parts.append("Source: EC Audiovisual (EbS) — planned coverage")
+        elif ev.get("source") == "euav":
+            desc_parts.append(f"{EUAV_TAG} Source: EC Audiovisual photo/video library")
         if ev.get("url"):
             desc_parts.append(ev["url"])
         description = "\\n".join(p.replace(",", "\\,") for p in desc_parts)
+        if ev.get("source") == "ics" and ev.get("ics_desc"):
+            description = ev["ics_desc"]
 
         lines += [
             "BEGIN:VEVENT",
@@ -950,7 +1079,10 @@ def main():
         mis_cutoff  = (date.today() - timedelta(days=MISSION_NOTIFY_DAYS)).isoformat()
         def _is_notify(e):
             return e["date"] >= (mis_cutoff if e.get("source") == "mission" else cutoff)
-        notify_events = [e for e in new_events if _is_notify(e)]
+        # EU AV photo events are calendar/agenda fill-ins only: the photo
+        # monitor already pushes an alert for every new photo of him.
+        notify_events = [e for e in new_events
+                         if _is_notify(e) and e.get("source") != "euav"]
         print(f"\n{len(events)} total  •  {len(new_events)} new "
               f"({len(notify_events)} recent, {len(new_events)-len(notify_events)} backlog) "
               f"•  {len(events)-len(new_events)} unchanged")
