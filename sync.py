@@ -927,10 +927,12 @@ def event_key(ev: dict) -> str:
 
 def _fmt_event_line(e: dict) -> str:
     badge = SOURCE_BADGE.get(e.get("source", ""), "•")
-    line  = f"{badge} {e['date']}  {e['title'][:60]}"
+    # Full title: EC titles carry the useful detail at the end (dates, org names),
+    # and ntfy wraps long lines fine.
+    line  = f"{badge} {e['date']}  {e['title']}"
     extra = e.get("location") or e.get("subject")
     if extra:
-        line += f"\n     {extra[:60]}"
+        line += f"\n     {extra[:120]}"
     return line
 
 
@@ -972,7 +974,8 @@ def push_notification(new_events: list):
     n_press  = sum(1 for e in new_events if e.get("source") == "press")
     n_trip   = sum(1 for e in new_events if e.get("source") == "mission")
     n_ebs    = sum(1 for e in new_events if e.get("source") == "ebs")
-    n_cal    = count - n_mtg - n_press - n_trip - n_ebs
+    n_photo  = sum(1 for e in new_events if e.get("source") == "euav")
+    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -987,9 +990,11 @@ def push_notification(new_events: list):
         bits.append(f"{n_trip} mission{'s' if n_trip != 1 else ''}")
     if n_ebs:
         bits.append(f"{n_ebs} scheduled")
+    if n_photo:
+        bits.append(f"{n_photo} seen in EC photos")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
-    details = "\n".join(_fmt_event_line(e) for e in new_events[:6])
+    details = "\n\n".join(_fmt_event_line(e) for e in new_events[:6])
     if count > 6:
         details += f"\n…and {count - 6} more"
 
