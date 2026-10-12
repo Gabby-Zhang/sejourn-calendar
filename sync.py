@@ -100,6 +100,24 @@ EUAV_VIDEO   = "https://audiovisual.ec.europa.eu/en/media/video/"
 EUAV_PERSON  = "241448"      # EU AV person id for Stéphane Séjourné (pers_json)
 EUAV_TAG     = "[EU_AV]"     # marker in DESCRIPTION; sa-archive / news monitor read it
 
+# Weekly College meeting — his own calendar is rarely updated, so we assume he
+# attends every College meeting (the user's explicit choice) and put it on the
+# calendar ahead of time. Convention: Wednesday in Brussels; Tuesday in
+# Strasbourg during EP plenary weeks (read from the EP open-data API, with a
+# hardcoded 2026 fallback). Skipped in August and on days he already has a
+# known engagement. Regenerated every run (old copies in the ICS are dropped),
+# so a prediction disappears as soon as a real event lands on that day.
+EP_API          = "https://data.europarl.europa.eu/api/v2"
+COLLEGE_TAG     = "[EU_AUTO]"   # sa-archive renders this as 🇪🇺 例会·推测
+COLLEGE_WEEKS   = 6
+COLLEGE_TITLE   = "Weekly College of Commissioners meeting (expected)"
+COLLEGE_URL     = "https://commission.europa.eu/about/organisation/college-commissioners_en"
+_STRASBOURG_MONDAYS_FALLBACK = {   # EP 2026 calendar
+    "2026-01-19", "2026-02-09", "2026-03-09", "2026-04-27", "2026-05-18",
+    "2026-06-15", "2026-07-06", "2026-09-14", "2026-10-05", "2026-10-19",
+    "2026-11-23", "2026-12-14",
+}
+
 # Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
 # it never pollutes the subscribable calendar with non-event chatter.
 GOOGLE_NEWS_RSS = (
@@ -146,6 +164,7 @@ SOURCE_BADGE = {
     "mission":      "✈️",
     "ebs":          "📺",
     "euav":         "📷",
+    "college":      "🇪🇺",
 }
 
 
@@ -694,6 +713,58 @@ def scrape_from_euav() -> list:
     return events
 
 
+# ── Strategy 8: assumed weekly College meeting ─────────────────────────────────
+
+def strasbourg_week_mondays() -> set:
+    """Mondays (ISO) of EP Strasbourg plenary weeks: weeks with a Monday or
+    Tuesday sitting (Brussels mini-plenaries are Wed–Thu only)."""
+    mondays = set()
+    try:
+        for year in {date.today().year, (date.today() + timedelta(weeks=COLLEGE_WEEKS)).year}:
+            resp = requests.get(f"{EP_API}/meetings", params={
+                "year": year, "format": "application/ld+json", "limit": 200,
+            }, headers={**HEADERS, "Accept": "application/ld+json"}, timeout=30)
+            resp.raise_for_status()
+            for m in resp.json().get("data", []):
+                d = datetime.strptime(m["activity_date"][:10], "%Y-%m-%d").date()
+                if d.weekday() in (0, 1):
+                    mondays.add((d - timedelta(days=d.weekday())).isoformat())
+    except (requests.RequestException, ValueError, KeyError) as e:
+        print(f"[College] EP plenary calendar fetch failed ({e}) — using 2026 fallback.")
+        return set(_STRASBOURG_MONDAYS_FALLBACK)
+    print(f"[College] {len(mondays)} Strasbourg plenary weeks from EP API.")
+    return mondays
+
+
+def predict_college_meetings(known: list) -> list:
+    busy = {e["date"] for e in known
+            if e.get("source") != "college" and COLLEGE_TAG not in e.get("ics_desc", "")}
+    stras = strasbourg_week_mondays()
+    today = date.today()
+    monday = today - timedelta(days=today.weekday())
+    out = []
+    for w in range(COLLEGE_WEEKS + 1):
+        wk_mon = monday + timedelta(weeks=w)
+        if wk_mon.isoformat() in stras:
+            meet, loc = wk_mon + timedelta(days=1), "Strasbourg"
+        else:
+            meet, loc = wk_mon + timedelta(days=2), "Brussels (Berlaymont)"
+        d = meet.isoformat()
+        if meet < today or meet.month == 8 or d in busy:
+            continue
+        out.append({
+            "title":    COLLEGE_TITLE,
+            "date":     d,
+            "location": loc,
+            "status":   "ongoing" if meet == today else "upcoming",
+            "source":   "college",
+            "subject":  "Assumed: he attends every weekly College meeting",
+            "url":      COLLEGE_URL,
+        })
+    print(f"[College] {len(out)} expected College meetings in the next {COLLEGE_WEEKS} weeks.")
+    return out
+
+
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
 
 # Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
@@ -807,6 +878,9 @@ def collect_all_events() -> list:
 
     out = drop_transparency_duplicates(list(merged.values()))
     out = drop_euav_duplicates(out)
+    # Predictions are regenerated each run: drop last run's copies first.
+    out = [e for e in out if COLLEGE_TAG not in e.get("ics_desc", "")]
+    out += predict_college_meetings(out)
     out.sort(key=lambda e: e["date"], reverse=True)
     print(f"[Total] {len(out)} unique Séjourné events after merging + dedup.")
     return out
@@ -868,6 +942,8 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: EC Audiovisual (EbS) — planned coverage")
         elif ev.get("source") == "euav":
             desc_parts.append(f"{EUAV_TAG} Source: EC Audiovisual photo/video library")
+        elif ev.get("source") == "college":
+            desc_parts.append(f"{COLLEGE_TAG} Expected — not on his official calendar")
         if ev.get("url"):
             desc_parts.append(ev["url"])
         description = "\\n".join(p.replace(",", "\\,") for p in desc_parts)
@@ -975,7 +1051,8 @@ def push_notification(new_events: list):
     n_trip   = sum(1 for e in new_events if e.get("source") == "mission")
     n_ebs    = sum(1 for e in new_events if e.get("source") == "ebs")
     n_photo  = sum(1 for e in new_events if e.get("source") == "euav")
-    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo
+    n_coll   = sum(1 for e in new_events if e.get("source") == "college")
+    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo - n_coll
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -992,6 +1069,8 @@ def push_notification(new_events: list):
         bits.append(f"{n_ebs} scheduled")
     if n_photo:
         bits.append(f"{n_photo} seen in EC photos")
+    if n_coll:
+        bits.append(f"{n_coll} College meeting{'s' if n_coll != 1 else ''} (expected)")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
     details = "\n\n".join(_fmt_event_line(e) for e in new_events[:6])
