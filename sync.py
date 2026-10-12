@@ -118,6 +118,41 @@ _STRASBOURG_MONDAYS_FALLBACK = {   # EP 2026 calendar
     "2026-11-23", "2026-12-14",
 }
 
+# European Parliament committees (eMeeting public backend, found via the SPA):
+#   meeting/events/eventsByMonth?language=en&year=&month=&organ=<CODE>
+#   OJ/oj?language=en&reference=<ref>&securedContext=false   (agenda; often empty)
+# A meeting whose agenda names him is confirmed ([EP_AGENDA]). Meetings of the
+# committees covering his portfolio are flagged as possible attendance
+# ([EP_MAYBE]) — the user asked for this, accepting false positives.
+EMEETING          = "https://emeeting.europarl.europa.eu/emeeting/plmrep/"
+EMEETING_PAGE     = "https://emeeting.europarl.europa.eu/emeeting/committee/en/agenda/{d}/{organ}"
+EP_FOCUS_COMMITTEES = {"ITRE": "Industry, Research and Energy",
+                       "IMCO": "Internal Market and Consumer Protection"}
+EP_AGENDA_TAG     = "[EP_AGENDA]"
+EP_MAYBE_TAG      = "[EP_MAYBE]"
+EP_LOOKAHEAD_DAYS = 28
+EP_VENUES         = {"BRU": "European Parliament, Brussels", "STR": "European Parliament, Strasbourg"}
+
+# Council of the EU — consilium.europa.eu blocks bots, but the rotating
+# presidency site (same CMS, no bot wall) lists every Council meeting. The
+# Competitiveness Council (internal market & industry) is his formation, so we
+# assume he attends ([COUNCIL_AUTO]). The site changes every semester: add the
+# next presidency here (an unreachable host just logs and is skipped).
+PRESIDENCY_SITES = [
+    ("2026-07-01", "2026-12-31", "https://irish-presidency.consilium.europa.eu"),
+    ("2027-01-01", "2027-06-30", "https://lithuanian-presidency.consilium.europa.eu"),
+]
+COUNCIL_TAG       = "[COUNCIL_AUTO]"
+COUNCIL_PATTERN   = re.compile(r"competitiveness[- ](?:council|ministers)", re.I)
+COUNCIL_LOOKAHEAD_DAYS = 120
+
+# Sources hit with many requests run at most every 6h; their events persist in
+# the ICS between scans.
+SLOW_SCAN_HOURS   = 6
+SLOW_SCAN_KEY     = "_meta|slow_scan"
+
+PREDICTED_TAGS    = ("[EU_AUTO]", "[EP_MAYBE]", "[COUNCIL_AUTO]")
+
 # Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
 # it never pollutes the subscribable calendar with non-event chatter.
 GOOGLE_NEWS_RSS = (
@@ -165,6 +200,8 @@ SOURCE_BADGE = {
     "ebs":          "📺",
     "euav":         "📷",
     "college":      "🇪🇺",
+    "ep":           "🏛️",
+    "council":      "🇪🇺",
 }
 
 
@@ -736,9 +773,13 @@ def strasbourg_week_mondays() -> set:
     return mondays
 
 
+def is_predicted(e: dict) -> bool:
+    text = e.get("ics_desc", "") + " " + e.get("subject", "")
+    return e.get("source") in ("college", "council") or any(t in text for t in PREDICTED_TAGS)
+
+
 def predict_college_meetings(known: list) -> list:
-    busy = {e["date"] for e in known
-            if e.get("source") != "college" and COLLEGE_TAG not in e.get("ics_desc", "")}
+    busy = {e["date"] for e in known if not is_predicted(e)}
     stras = strasbourg_week_mondays()
     today = date.today()
     monday = today - timedelta(days=today.weekday())
@@ -763,6 +804,164 @@ def predict_college_meetings(known: list) -> list:
         })
     print(f"[College] {len(out)} expected College meetings in the next {COLLEGE_WEEKS} weeks.")
     return out
+
+
+# ── Strategy 9: European Parliament committee meetings ─────────────────────────
+
+def _slow_scan_due() -> bool:
+    try:
+        last = json.loads(STATE_FILE.read_text()).get(SLOW_SCAN_KEY, "") if STATE_FILE.exists() else ""
+        return not last or datetime.now() - datetime.fromisoformat(last) >= timedelta(hours=SLOW_SCAN_HOURS)
+    except (ValueError, OSError):
+        return True
+
+
+def _months_ahead(days: int) -> list:
+    out, d, end = [], date.today().replace(day=1), date.today() + timedelta(days=days)
+    while d <= end:
+        out.append((d.year, d.month))
+        d = (d + timedelta(days=32)).replace(day=1)
+    return out
+
+
+_OJ_BUDGET = [200]   # max agenda requests per scan
+
+
+def _ep_agenda_mention(refs: list) -> str:
+    """Agenda text around his name for the first ref whose OJ mentions him."""
+    for ref in refs:
+        if _OJ_BUDGET[0] <= 0:
+            return ""
+        _OJ_BUDGET[0] -= 1
+        try:
+            r = requests.get(EMEETING + "OJ/oj", params={
+                "language": "en", "reference": ref, "securedContext": "false"},
+                headers={**HEADERS, "Accept": "application/json"}, timeout=20)
+        except requests.RequestException:
+            continue
+        txt = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>|\\n|[\"{}\[\]]", " ", r.text or "")))
+        m = re.search(r"s[ée]journ", txt, re.I)
+        if m:
+            return txt[max(0, m.start() - 120): m.start() + 80].strip()
+    return ""
+
+
+def scrape_from_ep_committees() -> list:
+    try:
+        resp = requests.get(EMEETING + "organs/committees", params={"language": "EN"},
+                            headers={**HEADERS, "Accept": "application/json"}, timeout=30)
+        resp.raise_for_status()
+        organs = [o["code"] for o in resp.json() if o.get("code")]
+    except (requests.RequestException, ValueError, KeyError) as e:
+        print(f"[EP] committee list failed: {e}")
+        return []
+
+    today = date.today()
+    horizon = today + timedelta(days=EP_LOOKAHEAD_DAYS)
+    meetings = {}     # (organ, date) -> {refs, venue, title}
+    for organ in organs:
+        for y, mth in _months_ahead(EP_LOOKAHEAD_DAYS):
+            try:
+                r = requests.get(EMEETING + "meeting/events/eventsByMonth", params={
+                    "language": "en", "year": y, "month": mth, "organ": organ},
+                    headers={**HEADERS, "Accept": "application/json"}, timeout=30)
+                r.raise_for_status()
+                items = r.json() or []
+            except (requests.RequestException, ValueError):
+                continue
+            for it in items:
+                try:
+                    d = datetime.fromtimestamp(int(it["start"]) / 1000, tz=timezone.utc).date()
+                except (KeyError, ValueError, TypeError):
+                    continue
+                if not (today <= d <= horizon):
+                    continue
+                m = meetings.setdefault((organ, d.isoformat()), {"refs": [], "venue": it.get("venue", "")})
+                for k in ("reference", "meetingReference"):
+                    if it.get(k) and it[k] not in m["refs"]:
+                        m["refs"].append(it[k])
+
+    events, n_conf = [], 0
+    for (organ, d), m in sorted(meetings.items()):
+        mention = _ep_agenda_mention(m["refs"])
+        if not mention and organ not in EP_FOCUS_COMMITTEES:
+            continue
+        loc = EP_VENUES.get(m["venue"], "European Parliament")
+        if mention:
+            n_conf += 1
+            title, subj = f"EP {organ} committee: exchange with Séjourné", f"{EP_AGENDA_TAG} {mention}"
+        else:
+            title = f"EP {organ} committee meeting ({EP_FOCUS_COMMITTEES[organ]}) — possible attendance"
+            subj  = f"{EP_MAYBE_TAG} His portfolio committee; attendance not confirmed"
+        events.append({
+            "title": title, "date": d, "location": loc,
+            "status": "ongoing" if d == today.isoformat() else "upcoming",
+            "source": "ep", "subject": subj,
+            "url": EMEETING_PAGE.format(d=d.replace("-", ""), organ=organ),
+        })
+    print(f"[EP] {len(meetings)} committee meeting-days scanned → "
+          f"{n_conf} naming Séjourné, {len(events) - n_conf} possible (ITRE/IMCO).")
+    return events
+
+
+# ── Strategy 10: Competitiveness Council (rotating presidency site) ────────────
+
+_MONTHS = {m: i for i, m in enumerate(
+    ["january", "february", "march", "april", "may", "june", "july", "august",
+     "september", "october", "november", "december"], 1)}
+
+
+def _first_date(text: str):
+    m = re.search(r"\b(\d{1,2})(?:\s*[-–]\s*\d{1,2})?\s+(January|February|March|April|May|June|July|"
+                  r"August|September|October|November|December)\s+(20\d\d)", text)
+    if not m:
+        return None
+    return date(int(m.group(3)), _MONTHS[m.group(2).lower()], int(m.group(1)))
+
+
+def scrape_from_council() -> list:
+    today   = date.today()
+    horizon = today + timedelta(days=COUNCIL_LOOKAHEAD_DAYS)
+    events  = []
+    for start, end, site in PRESIDENCY_SITES:
+        if end < today.isoformat() or start > horizon.isoformat():
+            continue
+        links, page = set(), 1
+        while page <= 15:
+            try:
+                r = requests.get(f"{site}/en/events/", params={
+                    "StartDate": max(start, today.isoformat()), "EndDate": min(end, horizon.isoformat()),
+                    "page": page}, headers=HEADERS, timeout=30)
+                r.raise_for_status()
+            except requests.RequestException as e:
+                print(f"[Council] {site} page {page} failed: {e}")
+                break
+            found = set(re.findall(r'href="(/en/events/[^"#?]+/)"', r.text)) - links
+            if not found:
+                break
+            links |= found
+            page += 1
+        for link in sorted(l for l in links if COUNCIL_PATTERN.search(l.replace("-", " ")) or "competitiveness" in l):
+            try:
+                pg = requests.get(site + link, headers=HEADERS, timeout=30).text
+            except requests.RequestException:
+                continue
+            tm = re.search(r"<title>(.*?)</title>", pg, re.S)
+            title = html.unescape(re.sub(r"\s*[|–-]\s*[^|–-]*presidency.*$", "", tm.group(1), flags=re.I).strip()) if tm else ""
+            if not COUNCIL_PATTERN.search(title):
+                continue
+            d = _first_date(re.sub(r"<[^>]+>", " ", pg))
+            if not d or not (today <= d <= horizon):
+                continue
+            events.append({
+                "title": f"{title} (expected)", "date": d.isoformat(), "location": "",
+                "status": "ongoing" if d == today else "upcoming",
+                "source": "council",
+                "subject": f"{COUNCIL_TAG} His Council formation; attendance assumed",
+                "url": site + link,
+            })
+    print(f"[Council] {len(events)} Competitiveness Council meetings ahead.")
+    return events
 
 
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
@@ -855,6 +1054,8 @@ def drop_euav_duplicates(events: list) -> list:
     return out
 
 
+SLOW_SCAN_RAN = False
+
 # ── Merge all sources ───────────────────────────────────────────────────────────
 
 def collect_all_events() -> list:
@@ -864,14 +1065,24 @@ def collect_all_events() -> list:
     mission_events = scrape_from_missions()
     ebs_events     = scrape_from_ebs()
     euav_events    = scrape_from_euav()
+    global SLOW_SCAN_RAN
+    SLOW_SCAN_RAN  = _slow_scan_due()
+    slow_events    = (scrape_from_ep_committees() + scrape_from_council()) if SLOW_SCAN_RAN else []
+    if not SLOW_SCAN_RAN:
+        print(f"[EP/Council] scanned < {SLOW_SCAN_HOURS}h ago — keeping ICS copies.")
     ics_events     = scrape_from_ics()
+    if SLOW_SCAN_RAN:
+        # Fresh scan replaces last scan's possible/expected entries.
+        ics_events = [e for e in ics_events
+                      if EP_MAYBE_TAG not in e.get("ics_desc", "")
+                      and COUNCIL_TAG not in e.get("ics_desc", "")]
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
     # so that subject/url/source fields stay populated. EbS comes before the ICS
     # copy so its precise start/end times survive the merge.
     merged = {}
     for ev in (web_events + reg_events + press_events + mission_events
-               + ebs_events + euav_events + ics_events):
+               + ebs_events + euav_events + slow_events + ics_events):
         k = f"{ev['date']}|{ev['title']}"
         if k not in merged:
             merged[k] = ev
@@ -942,6 +1153,10 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: EC Audiovisual (EbS) — planned coverage")
         elif ev.get("source") == "euav":
             desc_parts.append(f"{EUAV_TAG} Source: EC Audiovisual photo/video library")
+        elif ev.get("source") == "ep":
+            desc_parts.append("Source: European Parliament eMeeting")
+        elif ev.get("source") == "council":
+            desc_parts.append("Source: Council presidency calendar")
         elif ev.get("source") == "college":
             desc_parts.append(f"{COLLEGE_TAG} Expected — not on his official calendar")
         if ev.get("url"):
@@ -1052,7 +1267,9 @@ def push_notification(new_events: list):
     n_ebs    = sum(1 for e in new_events if e.get("source") == "ebs")
     n_photo  = sum(1 for e in new_events if e.get("source") == "euav")
     n_coll   = sum(1 for e in new_events if e.get("source") == "college")
-    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo - n_coll
+    n_ep     = sum(1 for e in new_events if e.get("source") == "ep")
+    n_cncl   = sum(1 for e in new_events if e.get("source") == "council")
+    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo - n_coll - n_ep - n_cncl
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -1071,11 +1288,16 @@ def push_notification(new_events: list):
         bits.append(f"{n_photo} seen in EC photos")
     if n_coll:
         bits.append(f"{n_coll} College meeting{'s' if n_coll != 1 else ''} (expected)")
+    if n_ep:
+        bits.append(f"{n_ep} EP committee")
+    if n_cncl:
+        bits.append(f"{n_cncl} Council (expected)")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
-    details = "\n\n".join(_fmt_event_line(e) for e in new_events[:6])
-    if count > 6:
-        details += f"\n…and {count - 6} more"
+    shown   = sorted(new_events, key=lambda e: e["date"])[:10]
+    details = "\n\n".join(_fmt_event_line(e) for e in shown)
+    if count > 10:
+        details += f"\n\n…and {count - 10} more"
 
     if ntfy_post("Séjourné - EU Commission", summary + "\n\n" + details,
                  priority=4 if upcoming else 3, tags=["calendar", "eu"]):
@@ -1150,6 +1372,9 @@ def main():
 
     state         = load_state()
     state_changed = False
+    if SLOW_SCAN_RAN:
+        state[SLOW_SCAN_KEY] = datetime.now().isoformat()
+        state_changed = True
 
     if not events:
         print("No events found from any source.")
