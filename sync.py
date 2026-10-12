@@ -144,7 +144,19 @@ PRESIDENCY_SITES = [
 ]
 COUNCIL_TAG       = "[COUNCIL_AUTO]"
 COUNCIL_PATTERN   = re.compile(r"competitiveness[- ](?:council|ministers)", re.I)
+# The research & space configuration belongs to other Commissioners.
+COUNCIL_EXCLUDE   = re.compile(r"research|space", re.I)
 COUNCIL_LOOKAHEAD_DAYS = 120
+
+# Supabase `schedule` table (sa-archive): his engagements already known from
+# the Paris Playbook, manual entries, and the news monitor ([NEWS_AUTO]).
+# Needs SUPABASE_URL + SUPABASE_KEY (read-only anon key) as Actions secrets;
+# skipped silently without them.
+SUPABASE_URL      = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SUPABASE_KEY      = os.environ.get("SUPABASE_KEY", "")
+SS_PERSON         = "Stéphane Séjourné"
+_FR_NUM = {"deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7,
+           "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
 
 # Sources hit with many requests run at most every 6h; their events persist in
 # the ICS between scans.
@@ -202,6 +214,7 @@ SOURCE_BADGE = {
     "college":      "🇪🇺",
     "ep":           "🏛️",
     "council":      "🇪🇺",
+    "known":        "📌",
 }
 
 
@@ -779,7 +792,15 @@ def is_predicted(e: dict) -> bool:
 
 
 def predict_college_meetings(known: list) -> list:
-    busy = {e["date"] for e in known if not is_predicted(e)}
+    busy = set()
+    for e in known:
+        if is_predicted(e):
+            continue
+        d = date.fromisoformat(e["date"])
+        end = date.fromisoformat(e.get("date_end") or e["date"])
+        while d <= end:
+            busy.add(d.isoformat())
+            d += timedelta(days=1)
     stras = strasbourg_week_mondays()
     today = date.today()
     monday = today - timedelta(days=today.weekday())
@@ -948,7 +969,7 @@ def scrape_from_council() -> list:
                 continue
             tm = re.search(r"<title>(.*?)</title>", pg, re.S)
             title = html.unescape(re.sub(r"\s*[|–-]\s*[^|–-]*presidency.*$", "", tm.group(1), flags=re.I).strip()) if tm else ""
-            if not COUNCIL_PATTERN.search(title):
+            if not COUNCIL_PATTERN.search(title) or COUNCIL_EXCLUDE.search(title):
                 continue
             d = _first_date(re.sub(r"<[^>]+>", " ", pg))
             if not d or not (today <= d <= horizon):
@@ -961,6 +982,54 @@ def scrape_from_council() -> list:
                 "url": site + link,
             })
     print(f"[Council] {len(events)} Competitiveness Council meetings ahead.")
+    return events
+
+
+# ── Strategy 11: known engagements from the sa-archive Supabase table ──────────
+
+def _trip_days(text: str) -> int:
+    """'visite de quatre jours' / 'four-day visit' / '3 jours' → 4 / 4 / 3."""
+    m = re.search(r"\b(\d|deux|trois|quatre|cinq|six|sept|two|three|four|five|six|seven)"
+                  r"(?:\s+|-)(?:jours|days?)\b", text, re.I)
+    if not m:
+        return 1
+    v = m.group(1).lower()
+    return int(v) if v.isdigit() else _FR_NUM.get(v, 1)
+
+
+def scrape_from_supabase() -> list:
+    if not (SUPABASE_URL and SUPABASE_KEY):
+        print("[Supabase] no SUPABASE_URL/SUPABASE_KEY — skipping known engagements.")
+        return []
+    since = (date.today() - timedelta(days=DAYS_BACK)).isoformat()
+    try:
+        r = requests.get(f"{SUPABASE_URL}/rest/v1/schedule", headers={
+            "apikey": SUPABASE_KEY, "Authorization": f"Bearer {SUPABASE_KEY}"}, params={
+            "select": "event_date,title,location,description,source_url",
+            "person": f"eq.{SS_PERSON}", "event_date": f"gte.{since}",
+            "order": "event_date.asc", "limit": "200"}, timeout=20)
+        r.raise_for_status()
+        rows = r.json()
+    except (requests.RequestException, ValueError) as e:
+        print(f"[Supabase] fetch failed: {e}")
+        return []
+    today, events = date.today().isoformat(), []
+    for row in rows:
+        d, title = str(row.get("event_date") or "")[:10], (row.get("title") or "").strip()
+        if not re.match(r"\d{4}-\d{2}-\d{2}$", d) or not title:
+            continue
+        ev = {
+            "title": title, "date": d, "location": (row.get("location") or "").strip(),
+            "status": "upcoming" if d > today else "ongoing" if d == today else "past",
+            "source": "known",
+            "subject": "Known engagement (" + re.sub(r"\s+", " ", (row.get("description") or "sa-archive")).strip()[:80] + ")",
+            "url": row.get("source_url") or "",
+        }
+        n = _trip_days(title + " " + (row.get("description") or ""))
+        if n > 1:
+            ev["date_end"] = (date.fromisoformat(d) + timedelta(days=n - 1)).isoformat()
+        events.append(ev)
+    print(f"[Supabase] {len(events)} known engagements of his (Playbook / manual / news).")
     return events
 
 
@@ -1065,6 +1134,7 @@ def collect_all_events() -> list:
     mission_events = scrape_from_missions()
     ebs_events     = scrape_from_ebs()
     euav_events    = scrape_from_euav()
+    known_events   = scrape_from_supabase()
     global SLOW_SCAN_RAN
     SLOW_SCAN_RAN  = _slow_scan_due()
     slow_events    = (scrape_from_ep_committees() + scrape_from_council()) if SLOW_SCAN_RAN else []
@@ -1082,7 +1152,7 @@ def collect_all_events() -> list:
     # copy so its precise start/end times survive the merge.
     merged = {}
     for ev in (web_events + reg_events + press_events + mission_events
-               + ebs_events + euav_events + slow_events + ics_events):
+               + ebs_events + euav_events + known_events + slow_events + ics_events):
         k = f"{ev['date']}|{ev['title']}"
         if k not in merged:
             merged[k] = ev
@@ -1157,6 +1227,8 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: European Parliament eMeeting")
         elif ev.get("source") == "council":
             desc_parts.append("Source: Council presidency calendar")
+        elif ev.get("source") == "known":
+            desc_parts.append("Source: sa-archive schedule (Playbook / manual / news)")
         elif ev.get("source") == "college":
             desc_parts.append(f"{COLLEGE_TAG} Expected — not on his official calendar")
         if ev.get("url"):
@@ -1269,7 +1341,8 @@ def push_notification(new_events: list):
     n_coll   = sum(1 for e in new_events if e.get("source") == "college")
     n_ep     = sum(1 for e in new_events if e.get("source") == "ep")
     n_cncl   = sum(1 for e in new_events if e.get("source") == "council")
-    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo - n_coll - n_ep - n_cncl
+    n_known  = sum(1 for e in new_events if e.get("source") == "known")
+    n_cal    = count - n_mtg - n_press - n_trip - n_ebs - n_photo - n_coll - n_ep - n_cncl - n_known
     upcoming = any(e["status"] in ("upcoming", "ongoing") for e in new_events)
 
     # Headline reflects the mix of sources.
@@ -1292,6 +1365,8 @@ def push_notification(new_events: list):
         bits.append(f"{n_ep} EP committee")
     if n_cncl:
         bits.append(f"{n_cncl} Council (expected)")
+    if n_known:
+        bits.append(f"{n_known} known (Playbook/news)")
     summary = f"{count} new ({' + '.join(bits)})" if bits else f"{count} new"
 
     shown   = sorted(new_events, key=lambda e: e["date"])[:10]
