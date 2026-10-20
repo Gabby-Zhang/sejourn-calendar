@@ -1,10 +1,24 @@
 # Séjourné — EU Audiovisual Media
 
-_Last updated: 2026-10-20 · 30 item(s) logged_
+_Last updated: 2026-10-20 · 44 item(s) logged_
 
 | Date | Type | Title | Link |
 |------|------|-------|------|
 | 2026-10-20 | 🎥 | European Commission Executive Vice-President Stéphane SÉJOURNÉ in New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/video/I-295639) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
+| 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
 | 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
 | 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
 | 2026-10-17 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to New Caledonia | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070644) |
