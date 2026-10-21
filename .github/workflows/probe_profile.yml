@@ -1,0 +1,30 @@
+# TEMP probe: dump Séjourné's commissioner profile page structure. Remove before merge.
+name: probe profile (temp)
+on:
+  push:
+    branches: [claude/nifty-cori-ocysfz]
+    paths: [.github/workflows/probe_profile.yml]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install -q beautifulsoup4 requests
+      - shell: python
+        run: |
+          import requests, re
+          from bs4 import BeautifulSoup
+          H={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36"}
+          base="https://commission.europa.eu/about/organisation/college-commissioners"
+          for u in [base+"/stephane-sejourne_en", base+"_en"]:
+              r=requests.get(u,headers=H,timeout=30); print("\n=====",u,r.status_code,len(r.text),r.url)
+              s=BeautifulSoup(r.text,"html.parser")
+              for a in s.find_all("a",href=True):
+                  t=a.get_text(" ",strip=True); h=a["href"]
+                  if re.search(r"journ|calendar|agenda",h+t,re.I): print("LINK",repr(t[:80]),h[:200])
+              if "college-commissioners_en" in u: continue
+              for hd in s.find_all(re.compile("^h[1-4]$")): print("HEAD",hd.name,hd.get_text(" ",strip=True)[:80])
+              for t in s.select("time, .ecl-date-block"):
+                  art=t.find_parent(["article","li","div"])
+                  print("DATE",t.get("class"),"|",t.get_text(" ",strip=True)[:40],"||",(art.get_text(" ",strip=True)[:200] if art else ""))
+              i=r.text.lower().find("calendar")
+              print("SNIP",r.text[max(0,i-1500):i+3500] if i>=0 else "no 'calendar' in page")
