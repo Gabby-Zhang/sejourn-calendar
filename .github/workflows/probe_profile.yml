@@ -1,4 +1,4 @@
-# TEMP probe: dump Séjourné's commissioner profile page structure. Remove before merge.
+# TEMP probe: render the filtered calendar in a real browser. Remove before merge.
 name: probe profile (temp)
 on:
   push:
@@ -8,20 +8,22 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - run: pip install -q beautifulsoup4 requests
+      - run: pip install -q playwright && python -m playwright install --with-deps chromium >/dev/null
       - shell: python
         run: |
-          import requests, re
-          from bs4 import BeautifulSoup
-          H={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36"}
+          from playwright.sync_api import sync_playwright
           U=("https://commission.europa.eu/about/organisation/college-commissioners/calendar-items-president-and-commissioners_en"
              "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic%3Ahttp%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D")
-          for extra in ["", "&page=1", "&page=2", "&f%5B1%5D=oe_list_page_date_status%3Apast"]:
-              r=requests.get(U+extra,headers=H,timeout=30); s=BeautifulSoup(r.text,"html.parser")
-              arts=s.select("article.ecl-content-item--inline")
-              cnt=s.find(string=re.compile(r"\d+\s+(items|results)", re.I))
-              print("\n=====",extra or "(page0)",r.status_code,"items:",len(arts),"| count text:",cnt)
-              for a in arts:
-                  t=a.select_one(".ecl-content-block__title"); tm=a.select_one("time")
-                  print("  ",tm.get_text(" ",strip=True) if tm else "?","|",t.get_text(strip=True)[:110] if t else "?")
-              for a in s.select("a[href*='page=']")[:6]: print("  PAGER",a.get_text(strip=True),a["href"][-60:])
+          with sync_playwright() as p:
+              b=p.chromium.launch(); pg=b.new_page(user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36")
+              reqs=[]
+              pg.on("request", lambda r: reqs.append((r.resource_type, r.method, r.url)) if r.resource_type in ("xhr","fetch","document") else None)
+              for url in [U, U+"&page=1"]:
+                  reqs.clear()
+                  pg.goto(url, wait_until="networkidle", timeout=60000)
+                  print("\n=====", pg.url)
+                  for t in pg.locator("article.ecl-content-item--inline").all()[:25]:
+                      print("  ", " ".join(t.inner_text().split())[:150])
+                  print("  facet text:", [x for x in pg.locator("text=/S[ée]journ/").all_inner_texts()][:5])
+                  for r in reqs: print("  REQ", r[0], r[1], r[2][:250])
+              b.close()
