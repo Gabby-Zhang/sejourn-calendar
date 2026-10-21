@@ -14,17 +14,14 @@ jobs:
           import requests, re
           from bs4 import BeautifulSoup
           H={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36"}
-          base="https://commission.europa.eu/about/organisation/college-commissioners"
-          for u in [base+"/stephane-sejourne_en", base+"_en"]:
-              r=requests.get(u,headers=H,timeout=30); print("\n=====",u,r.status_code,len(r.text),r.url)
-              s=BeautifulSoup(r.text,"html.parser")
-              for a in s.find_all("a",href=True):
-                  t=a.get_text(" ",strip=True); h=a["href"]
-                  if re.search(r"journ|calendar|agenda",h+t,re.I): print("LINK",repr(t[:80]),h[:200])
-              if "college-commissioners_en" in u: continue
-              for hd in s.find_all(re.compile("^h[1-4]$")): print("HEAD",hd.name,hd.get_text(" ",strip=True)[:80])
-              for t in s.select("time, .ecl-date-block"):
-                  art=t.find_parent(["article","li","div"])
-                  print("DATE",t.get("class"),"|",t.get_text(" ",strip=True)[:40],"||",(art.get_text(" ",strip=True)[:200] if art else ""))
-              i=r.text.lower().find("calendar")
-              print("SNIP",r.text[max(0,i-1500):i+3500] if i>=0 else "no 'calendar' in page")
+          U=("https://commission.europa.eu/about/organisation/college-commissioners/calendar-items-president-and-commissioners_en"
+             "?f%5B0%5D=commissioner_dynamic_commissioner_dynamic%3Ahttp%3A//publications.europa.eu/resource/authority/political-leader/COM_00006A047C6D")
+          for extra in ["", "&page=1", "&page=2", "&f%5B1%5D=oe_list_page_date_status%3Apast"]:
+              r=requests.get(U+extra,headers=H,timeout=30); s=BeautifulSoup(r.text,"html.parser")
+              arts=s.select("article.ecl-content-item--inline")
+              cnt=s.find(string=re.compile(r"\d+\s+(items|results)", re.I))
+              print("\n=====",extra or "(page0)",r.status_code,"items:",len(arts),"| count text:",cnt)
+              for a in arts:
+                  t=a.select_one(".ecl-content-block__title"); tm=a.select_one("time")
+                  print("  ",tm.get_text(" ",strip=True) if tm else "?","|",t.get_text(strip=True)[:110] if t else "?")
+              for a in s.select("a[href*='page=']")[:6]: print("  PAGER",a.get_text(strip=True),a["href"][-60:])
