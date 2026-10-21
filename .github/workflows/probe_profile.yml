@@ -1,0 +1,42 @@
+# TEMP probe: compare calendar freshness across EVPs. Remove before merge.
+name: probe evp freshness (temp)
+on:
+  push:
+    branches: [claude/nifty-cori-ocysfz]
+    paths: [.github/workflows/probe_profile.yml]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: pip install -q beautifulsoup4 requests
+      - shell: python
+        run: |
+          import requests, re, time, collections
+          from bs4 import BeautifulSoup
+          H={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36"}
+          B="https://commission.europa.eu/about/organisation/college-commissioners/calendar-items-president-and-commissioners_en"
+          M={m:i+1 for i,m in enumerate("Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())}
+          EVP=["Ribera","Virkkunen","Séjourné","Kallas","Fitto","Mînzatu","Minzatu","von der Leyen"]
+          stats=collections.defaultdict(list); prev=None; pages=0
+          for p in range(40):
+              s=BeautifulSoup(requests.get(f"{B}?page={p}",headers=H,timeout=30).text,"html.parser")
+              rows=[]
+              for a in s.select("article.ecl-content-item--inline"):
+                  d=a.select_one(".ecl-date-block__day"); m=a.select_one(".ecl-date-block__month"); y=a.select_one(".ecl-date-block__year")
+                  t=a.select_one(".ecl-content-block__title")
+                  if not(d and m and y and t): continue
+                  try: dt=f"{y.get_text(strip=True)}-{M[m.get_text(strip=True)[:3].title()]:02d}-{int(d.get_text(strip=True).split('-')[0]):02d}"
+                  except Exception: continue
+                  rows.append((dt,t.get_text(strip=True)))
+              sig=tuple(rows)
+              if not rows or sig==prev: print("stop at page",p, "(empty)" if not rows else "(repeat)"); break
+              prev=sig; pages+=1
+              for dt,tt in rows:
+                  for n in EVP:
+                      if n.lower() in tt.lower(): stats[n].append(dt)
+              time.sleep(0.8)
+          allds=[d for v in stats.values() for d in v]
+          print("pages",pages)
+          for n in EVP:
+              v=sorted(stats.get(n,[]))
+              print(f"{n:15s} items={len(v):3d} latest={v[-1] if v else '-':10s} earliest_seen={v[0] if v else '-'}")
