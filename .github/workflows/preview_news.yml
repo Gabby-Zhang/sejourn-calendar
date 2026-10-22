@@ -15,7 +15,7 @@ jobs:
       - shell: python
         env: {NTFY_TOPIC: ss-calendar-update}
         run: |
-          import sync
+          import sys; sys.path.insert(0, "."); import sync
           orig = sync.ntfy_post
           sync.ntfy_post = lambda title, message, *a, **k: orig("[TEST] " + title, message, *a, **k)
           state = {}                      # fresh state, never saved
