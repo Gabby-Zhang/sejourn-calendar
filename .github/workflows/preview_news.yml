@@ -1,0 +1,22 @@
+# TEMP: preview the new news-alert format with the branch code. Remove before merge.
+name: preview news alert (temp)
+on:
+  push:
+    branches: [claude/nifty-cori-ocysfz]
+    paths: [.github/workflows/preview_news.yml]
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install -q -r requirements.txt
+      - shell: python
+        env: {NTFY_TOPIC: ss-calendar-update}
+        run: |
+          import sync
+          orig = sync.ntfy_post
+          sync.ntfy_post = lambda title, message, *a, **k: orig("[TEST] " + title, message, *a, **k)
+          state = {}                      # fresh state, never saved
+          print("returned", sync.notify_news(state))
