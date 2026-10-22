@@ -1400,14 +1400,17 @@ def push_notification(new_events: list):
 # Headline names him as a proper noun: capitalised "Séjourné"/"Sejourne" (or
 # all caps). The *séjourner* verb is lowercase mid-sentence ("ont séjourné"),
 # so a case-sensitive match drops it while keeping "Séjourné in visita…".
-def _translate_headlines(titles: list) -> list:
-    """English versions of the headlines (one Claude call per alert), so the
-    push reads like the daily email. Returns [] when ANTHROPIC_API_KEY is unset
-    or anything fails — the alert then just shows the original headlines."""
+def _summarize_headlines(titles: list, pub_dates: list) -> list:
+    """One short English line per headline, framed as what Séjourné is doing
+    (one Claude call per alert): an engagement becomes '🗓 <place/date>: <what>',
+    anything else a '📰' gist. Returns [] when ANTHROPIC_API_KEY is unset or
+    anything fails — the alert then just shows the original headlines."""
     if not titles or not os.environ.get("ANTHROPIC_API_KEY"):
         return []
     try:
         import anthropic
+        listing = "\n".join(f"{i + 1}. [published {d}] {t}"
+                             for i, (t, d) in enumerate(zip(titles, pub_dates)))
         resp = anthropic.Anthropic().messages.create(
             model="claude-opus-5-5",
             max_tokens=4000,
@@ -1415,22 +1418,37 @@ def _translate_headlines(titles: list) -> list:
                 "effort": "low",
                 "format": {"type": "json_schema", "schema": {
                     "type": "object",
-                    "properties": {"english": {"type": "array", "items": {"type": "string"}}},
-                    "required": ["english"], "additionalProperties": False}},
+                    "properties": {"lines": {"type": "array", "items": {
+                        "type": "object",
+                        "properties": {"is_activity": {"type": "boolean"},
+                                       "line": {"type": "string"}},
+                        "required": ["is_activity", "line"],
+                        "additionalProperties": False}}},
+                    "required": ["lines"], "additionalProperties": False}},
             },
             messages=[{"role": "user", "content":
-                "Translate each news headline into concise, natural English (keep "
-                "names as written; if already English, return it unchanged). "
-                "Return them in the same order.\n\n" +
-                "\n".join(f"{i + 1}. {t}" for i, t in enumerate(titles))}],
+                "These news headlines (any language) mention Stéphane Séjourné, "
+                "European Commission Executive Vice-President. For each one, write "
+                "ONE short English line (max ~12 words), in order.\n"
+                "- If it reports something he does or will do (a visit, trip, "
+                "meeting, speech, interview, announcement), set is_activity=true "
+                "and write it as his itinerary: 'Place, date: what' — e.g. "
+                "'Australia, 22–23 Oct: official visit on industry & critical raw "
+                "materials'. Use the date only if the headline or publish date "
+                "makes it clear; otherwise omit it.\n"
+                "- Otherwise set is_activity=false and give the gist of how he "
+                "figures in the story.\n"
+                "Never invent facts that aren't in the headline.\n\n" + listing}],
         )
         if resp.stop_reason != "end_turn":
             return []
         text = next(b.text for b in resp.content if b.type == "text")
-        english = json.loads(text)["english"]
-        return english if len(english) == len(titles) else []
-    except Exception as e:                 # never let translation block an alert
-        print(f"[News] translation skipped: {e}")
+        lines = json.loads(text)["lines"]
+        if len(lines) != len(titles):
+            return []
+        return [("🗓 " if x["is_activity"] else "📰 ") + x["line"].strip() for x in lines]
+    except Exception as e:                 # never let summarising block an alert
+        print(f"[News] headline summary skipped: {e}")
         return []
 
 
@@ -1488,7 +1506,7 @@ def notify_news(state: dict) -> int:
         if published is None or now - published > timedelta(hours=NEWS_MAX_AGE_HOURS):
             n_stale += 1
             continue
-        new.append((title, link))
+        new.append((title, link, published))
 
     if n_stale:
         print(f"[News] {n_stale} older article(s) recorded without notifying.")
@@ -1496,28 +1514,27 @@ def notify_news(state: dict) -> int:
         print("[News] no new articles.")
         return n_stale
 
-    # Laid out like the daily email: English headline, then source and the
-    # original headline. No raw Google News URLs (hundreds of characters, and
+    # Laid out like the daily email: a short English line framed as his
+    # itinerary, with the source underneath (the full headline is one tap away). No raw Google News URLs (hundreds of characters, and
     # most ntfy clients don't render markdown links) — each article gets a
     # button instead (ntfy allows 3), and tapping the alert opens the first.
     shown   = new[:6]
-    split   = [_split_source(t) for t, _ in shown]
-    english = _translate_headlines([h for h, _ in split])
+    split   = [_split_source(t) for t, _, _ in shown]
+    english = _summarize_headlines([h for h, _ in split],
+                                   [p.strftime("%d %b %Y") for _, _, p in shown])
     lines = []
     for i, (head, src) in enumerate(split):
         en = english[i] if english else head
         lines.append(f"{i + 1}. {en}")
-        orig = head if english and en.strip().lower() != head.strip().lower() else ""
-        meta = " · ".join(x for x in (src, orig) if x)
-        if meta:
-            lines.append(f"   {meta}")
+        if src:
+            lines.append(f"   {src}")
     body = "\n".join(lines)
     if len(new) > 6:
         body += f"\n…and {len(new) - 6} more"
     msg = f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n" + body
     actions = [{"action": "view", "label": f"{i + 1} · {(src or 'Open')[:20]}",
                 "url": link}
-               for i, ((_, src), (_, link)) in enumerate(zip(split, shown[:3]))]
+               for i, ((_, src), (_, link, _)) in enumerate(zip(split, shown[:3]))]
     if ntfy_post("Séjourné - in the news", msg, priority=2, tags=["newspaper"],
                  click=shown[0][1], actions=actions):
         print(f"[News] notified {len(new)} new article(s).")
