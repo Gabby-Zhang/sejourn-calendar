@@ -21,7 +21,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4 anthropic
+        run: pip install requests beautifulsoup4
 
       - name: Run sync
         run: python sync.py
@@ -29,7 +29,6 @@ jobs:
           NTFY_TOPIC: ss-calendar-update
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Commit updated files
         run: |

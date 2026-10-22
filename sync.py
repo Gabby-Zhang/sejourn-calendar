@@ -1400,58 +1400,6 @@ def push_notification(new_events: list):
 # Headline names him as a proper noun: capitalised "Séjourné"/"Sejourne" (or
 # all caps). The *séjourner* verb is lowercase mid-sentence ("ont séjourné"),
 # so a case-sensitive match drops it while keeping "Séjourné in visita…".
-def _summarize_headlines(titles: list, pub_dates: list) -> list:
-    """One short English line per headline, framed as what Séjourné is doing
-    (one Claude call per alert): an engagement becomes '🗓 <place/date>: <what>',
-    anything else a '📰' gist. Returns [] when ANTHROPIC_API_KEY is unset or
-    anything fails — the alert then just shows the original headlines."""
-    if not titles or not os.environ.get("ANTHROPIC_API_KEY"):
-        return []
-    try:
-        import anthropic
-        listing = "\n".join(f"{i + 1}. [published {d}] {t}"
-                             for i, (t, d) in enumerate(zip(titles, pub_dates)))
-        resp = anthropic.Anthropic().messages.create(
-            model="claude-opus-5-5",
-            max_tokens=4000,
-            output_config={
-                "effort": "low",
-                "format": {"type": "json_schema", "schema": {
-                    "type": "object",
-                    "properties": {"lines": {"type": "array", "items": {
-                        "type": "object",
-                        "properties": {"is_activity": {"type": "boolean"},
-                                       "line": {"type": "string"}},
-                        "required": ["is_activity", "line"],
-                        "additionalProperties": False}}},
-                    "required": ["lines"], "additionalProperties": False}},
-            },
-            messages=[{"role": "user", "content":
-                "These news headlines (any language) mention Stéphane Séjourné, "
-                "European Commission Executive Vice-President. For each one, write "
-                "ONE short English line (max ~12 words), in order.\n"
-                "- If it reports something he does or will do (a visit, trip, "
-                "meeting, speech, interview, announcement), set is_activity=true "
-                "and write it as his itinerary: 'Place, date: what' — e.g. "
-                "'Australia, 22–23 Oct: official visit on industry & critical raw "
-                "materials'. Use the date only if the headline or publish date "
-                "makes it clear; otherwise omit it.\n"
-                "- Otherwise set is_activity=false and give the gist of how he "
-                "figures in the story.\n"
-                "Never invent facts that aren't in the headline.\n\n" + listing}],
-        )
-        if resp.stop_reason != "end_turn":
-            return []
-        text = next(b.text for b in resp.content if b.type == "text")
-        lines = json.loads(text)["lines"]
-        if len(lines) != len(titles):
-            return []
-        return [("🗓 " if x["is_activity"] else "📰 ") + x["line"].strip() for x in lines]
-    except Exception as e:                 # never let summarising block an alert
-        print(f"[News] headline summary skipped: {e}")
-        return []
-
-
 def _split_source(title: str) -> tuple:
     """'Headline - Source' (Google News format) → ('Headline', 'Source')."""
     m = re.match(r"(.*\S)\s+[-–—|]\s+([^-–—|]{1,60})$", title)
@@ -1514,18 +1462,15 @@ def notify_news(state: dict) -> int:
         print("[News] no new articles.")
         return n_stale
 
-    # Laid out like the daily email: a short English line framed as his
-    # itinerary, with the source underneath (the full headline is one tap away). No raw Google News URLs (hundreds of characters, and
-    # most ntfy clients don't render markdown links) — each article gets a
-    # button instead (ntfy allows 3), and tapping the alert opens the first.
+    # Numbered headlines with the source underneath. No raw Google News URLs
+    # (hundreds of characters, and most ntfy clients don't render markdown
+    # links) — each article gets a button instead (ntfy allows 3), and
+    # tapping the alert opens the first.
     shown   = new[:6]
     split   = [_split_source(t) for t, _, _ in shown]
-    english = _summarize_headlines([h for h, _ in split],
-                                   [p.strftime("%d %b %Y") for _, _, p in shown])
     lines = []
     for i, (head, src) in enumerate(split):
-        en = english[i] if english else head
-        lines.append(f"{i + 1}. {en}")
+        lines.append(f"{i + 1}. {head}")
         if src:
             lines.append(f"   {src}")
     body = "\n".join(lines)
