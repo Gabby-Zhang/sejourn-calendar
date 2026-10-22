@@ -1315,7 +1315,7 @@ def _fmt_event_line(e: dict) -> str:
 
 
 def ntfy_post(title: str, message: str, priority: int, tags: list,
-              markdown: bool = False, click: str = "") -> bool:
+              click: str = "", actions: list = None) -> bool:
     """Publish via ntfy's JSON API.
 
     HTTP headers are latin-1, so a 'Title' header with é arrives as 'S�journ�';
@@ -1325,8 +1325,9 @@ def ntfy_post(title: str, message: str, priority: int, tags: list,
         resp = requests.post(
             "https://ntfy.sh/",
             json={"topic": NTFY_TOPIC, "title": title, "message": message,
-                  "priority": priority, "tags": tags, "markdown": markdown,
-                  **({"click": click} if click else {})},
+                  "priority": priority, "tags": tags,
+                  **({"click": click} if click else {}),
+                  **({"actions": actions} if actions else {})},
             timeout=10,
         )
         resp.raise_for_status()
@@ -1399,6 +1400,46 @@ def push_notification(new_events: list):
 # Headline names him as a proper noun: capitalised "Séjourné"/"Sejourne" (or
 # all caps). The *séjourner* verb is lowercase mid-sentence ("ont séjourné"),
 # so a case-sensitive match drops it while keeping "Séjourné in visita…".
+def _translate_headlines(titles: list) -> list:
+    """English versions of the headlines (one Claude call per alert), so the
+    push reads like the daily email. Returns [] when ANTHROPIC_API_KEY is unset
+    or anything fails — the alert then just shows the original headlines."""
+    if not titles or not os.environ.get("ANTHROPIC_API_KEY"):
+        return []
+    try:
+        import anthropic
+        resp = anthropic.Anthropic().messages.create(
+            model="claude-opus-5-5",
+            max_tokens=4000,
+            output_config={
+                "effort": "low",
+                "format": {"type": "json_schema", "schema": {
+                    "type": "object",
+                    "properties": {"english": {"type": "array", "items": {"type": "string"}}},
+                    "required": ["english"], "additionalProperties": False}},
+            },
+            messages=[{"role": "user", "content":
+                "Translate each news headline into concise, natural English (keep "
+                "names as written; if already English, return it unchanged). "
+                "Return them in the same order.\n\n" +
+                "\n".join(f"{i + 1}. {t}" for i, t in enumerate(titles))}],
+        )
+        if resp.stop_reason != "end_turn":
+            return []
+        text = next(b.text for b in resp.content if b.type == "text")
+        english = json.loads(text)["english"]
+        return english if len(english) == len(titles) else []
+    except Exception as e:                 # never let translation block an alert
+        print(f"[News] translation skipped: {e}")
+        return []
+
+
+def _split_source(title: str) -> tuple:
+    """'Headline - Source' (Google News format) → ('Headline', 'Source')."""
+    m = re.match(r"(.*\S)\s+[-–—|]\s+([^-–—|]{1,60})$", title)
+    return (m.group(1), m.group(2).strip()) if m else (title, "")
+
+
 _SEJOURNE_NAME = re.compile(r"\bS(?:[ée]journ[ée]|ÉJOURNÉ|EJOURNE)\b")
 
 
@@ -1455,14 +1496,30 @@ def notify_news(state: dict) -> int:
         print("[News] no new articles.")
         return n_stale
 
-    # Markdown links instead of raw Google News redirect URLs (hundreds of
-    # characters each); tapping the notification opens the first article.
-    body = "\n\n".join(f"📰 [{t[:120]}]({l})" for t, l in new[:6])
+    # Laid out like the daily email: English headline, then source and the
+    # original headline. No raw Google News URLs (hundreds of characters, and
+    # most ntfy clients don't render markdown links) — each article gets a
+    # button instead (ntfy allows 3), and tapping the alert opens the first.
+    shown   = new[:6]
+    split   = [_split_source(t) for t, _ in shown]
+    english = _translate_headlines([h for h, _ in split])
+    lines = []
+    for i, (head, src) in enumerate(split):
+        en = english[i] if english else head
+        lines.append(f"{i + 1}. {en}")
+        orig = head if english and en.strip().lower() != head.strip().lower() else ""
+        meta = " · ".join(x for x in (src, orig) if x)
+        if meta:
+            lines.append(f"   {meta}")
+    body = "\n".join(lines)
     if len(new) > 6:
-        body += f"\n\n…and {len(new) - 6} more"
+        body += f"\n…and {len(new) - 6} more"
     msg = f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n" + body
+    actions = [{"action": "view", "label": f"{i + 1} · {(src or 'Open')[:20]}",
+                "url": link}
+               for i, ((_, src), (_, link)) in enumerate(zip(split, shown[:3]))]
     if ntfy_post("Séjourné - in the news", msg, priority=2, tags=["newspaper"],
-                 markdown=True, click=new[0][1]):
+                 click=shown[0][1], actions=actions):
         print(f"[News] notified {len(new)} new article(s).")
     return len(new) + n_stale
 
