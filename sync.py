@@ -172,9 +172,13 @@ PREDICTED_TAGS    = ("[EU_AUTO]", "[EP_MAYBE]", "[COUNCIL_AUTO]")
 # 2026-10-22/23 Australia visit was on ANSA, in Italian, and nowhere else).
 # The last feed is a dedicated ANSA net (ansa.it/europa tracks his trips).
 _GNEWS = "https://news.google.com/rss/search?q={q}&{ed}"
+# Non-English editions query the FULL name: in French, bare "séjourné" is the
+# past participle of *séjourner* (to stay), which flooded alerts with tourism
+# stories ("Des Québécois ont séjourné au village").
 GOOGLE_NEWS_FEEDS = [
-    _GNEWS.format(q="%22S%C3%A9journ%C3%A9%22+when:2d", ed=ed) for ed in (
-        "hl=en-US&gl=US&ceid=US:en",
+    _GNEWS.format(q="%22S%C3%A9journ%C3%A9%22+when:2d", ed="hl=en-US&gl=US&ceid=US:en"),
+] + [
+    _GNEWS.format(q="%22St%C3%A9phane+S%C3%A9journ%C3%A9%22+when:2d", ed=ed) for ed in (
         "hl=fr&gl=FR&ceid=FR:fr",
         "hl=it&gl=IT&ceid=IT:it",
         "hl=de&gl=DE&ceid=DE:de",
@@ -1310,7 +1314,8 @@ def _fmt_event_line(e: dict) -> str:
     return line
 
 
-def ntfy_post(title: str, message: str, priority: int, tags: list) -> bool:
+def ntfy_post(title: str, message: str, priority: int, tags: list,
+              markdown: bool = False, click: str = "") -> bool:
     """Publish via ntfy's JSON API.
 
     HTTP headers are latin-1, so a 'Title' header with é arrives as 'S�journ�';
@@ -1320,7 +1325,8 @@ def ntfy_post(title: str, message: str, priority: int, tags: list) -> bool:
         resp = requests.post(
             "https://ntfy.sh/",
             json={"topic": NTFY_TOPIC, "title": title, "message": message,
-                  "priority": priority, "tags": tags},
+                  "priority": priority, "tags": tags, "markdown": markdown,
+                  **({"click": click} if click else {})},
             timeout=10,
         )
         resp.raise_for_status()
@@ -1390,6 +1396,12 @@ def push_notification(new_events: list):
         print(f"Push notification sent → ntfy:{NTFY_TOPIC}")
 
 
+# Headline names him as a proper noun: capitalised "Séjourné"/"Sejourne" (or
+# all caps). The *séjourner* verb is lowercase mid-sentence ("ont séjourné"),
+# so a case-sensitive match drops it while keeping "Séjourné in visita…".
+_SEJOURNE_NAME = re.compile(r"\bS(?:[ée]journ[ée]|ÉJOURNÉ|EJOURNE)\b")
+
+
 def notify_news(state: dict) -> int:
     """Google News 'sightings' channel — notify on new articles mentioning him.
 
@@ -1418,7 +1430,7 @@ def notify_news(state: dict) -> int:
         pm = re.search(r"<pubDate>(.*?)</pubDate>", block, re.S)
         title = html.unescape(re.sub(r"<[^>]+>", "", tm.group(1)).strip()) if tm else ""
         link  = re.sub(r"<[^>]+>", "", lm.group(1)).strip() if lm else ""
-        if not mentions_sejourne(title):
+        if not _SEJOURNE_NAME.search(title):
             continue
         # Old-style key (raw title hash) is still checked so articles already
         # seen before the normalised key existed don't re-notify.
@@ -1443,11 +1455,14 @@ def notify_news(state: dict) -> int:
         print("[News] no new articles.")
         return n_stale
 
-    body = "\n\n".join(f"📰 {t[:90]}\n{l}" for t, l in new[:6])
+    # Markdown links instead of raw Google News redirect URLs (hundreds of
+    # characters each); tapping the notification opens the first article.
+    body = "\n\n".join(f"📰 [{t[:120]}]({l})" for t, l in new[:6])
     if len(new) > 6:
-        body += f"\n…and {len(new) - 6} more"
+        body += f"\n\n…and {len(new) - 6} more"
     msg = f"{len(new)} news mention{'s' if len(new) != 1 else ''}\n\n" + body
-    if ntfy_post("Séjourné - in the news", msg, priority=2, tags=["newspaper"]):
+    if ntfy_post("Séjourné - in the news", msg, priority=2, tags=["newspaper"],
+                 markdown=True, click=new[0][1]):
         print(f"[News] notified {len(new)} new article(s).")
     return len(new) + n_stale
 
