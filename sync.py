@@ -167,10 +167,21 @@ PREDICTED_TAGS    = ("[EU_AUTO]", "[EP_MAYBE]", "[COUNCIL_AUTO]")
 
 # Google News — broad "sightings" feed. Notify-only; NOT written to the ICS so
 # it never pollutes the subscribable calendar with non-event chatter.
-GOOGLE_NEWS_RSS = (
-    "https://news.google.com/rss/search?"
-    "q=%22S%C3%A9journ%C3%A9%22+when:2d&hl=en-US&gl=US&ceid=US:en"
-)
+# One feed per Google News edition: each edition only returns articles in its
+# own language, and his trips are often reported only in non-EN/FR press (the
+# 2026-10-22/23 Australia visit was on ANSA, in Italian, and nowhere else).
+# The last feed is a dedicated ANSA net (ansa.it/europa tracks his trips).
+_GNEWS = "https://news.google.com/rss/search?q={q}&{ed}"
+GOOGLE_NEWS_FEEDS = [
+    _GNEWS.format(q="%22S%C3%A9journ%C3%A9%22+when:2d", ed=ed) for ed in (
+        "hl=en-US&gl=US&ceid=US:en",
+        "hl=fr&gl=FR&ceid=FR:fr",
+        "hl=it&gl=IT&ceid=IT:it",
+        "hl=de&gl=DE&ceid=DE:de",
+        "hl=es&gl=ES&ceid=ES:es",
+    )
+] + [_GNEWS.format(q="S%C3%A9journ%C3%A9+site:ansa.it",
+                   ed="hl=it&gl=IT&ceid=IT:it")]
 # Google News RSS is sorted by relevance, not date, and keeps resurfacing old
 # articles (sometimes with a re-worded title). Only articles published within
 # this window notify; older ones are recorded silently.
@@ -1388,17 +1399,20 @@ def notify_news(state: dict) -> int:
     """
     if not NTFY_TOPIC:
         return 0
-    try:
-        resp = requests.get(GOOGLE_NEWS_RSS, headers=HEADERS, timeout=30)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        print(f"[News] fetch failed: {e}")
-        return 0
+    blocks = []
+    for feed in GOOGLE_NEWS_FEEDS:
+        try:
+            resp = requests.get(feed, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            print(f"[News] fetch failed ({feed[-24:]}): {e}")
+            continue
+        blocks += re.findall(r"<item>(.*?)</item>", resp.text, re.S)[:40]
 
     now     = datetime.now(timezone.utc)
     new     = []
     n_stale = 0
-    for block in re.findall(r"<item>(.*?)</item>", resp.text, re.S)[:40]:
+    for block in blocks:
         tm = re.search(r"<title>(.*?)</title>", block, re.S)
         lm = re.search(r"<link>(.*?)</link>", block, re.S)
         pm = re.search(r"<pubDate>(.*?)</pubDate>", block, re.S)
