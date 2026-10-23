@@ -43,6 +43,7 @@ from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 from xml.etree import ElementTree as ET
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -81,13 +82,11 @@ MISSIONS_EXPORT = (
     "/data/missions/commissioners/export?hostId="
 )
 
-# EbS (audiovisual.ec.europa.eu) event-planning feed — the EC AV service's
-# schedule of upcoming covered events. Undocumented AWS backend behind the SPA;
-# the only source with precise start/end *times* (everything else is all-day)
-# and forward-looking. Filter by tagged personality, so zero name false hits.
-EBS_API = ("https://8hwk2cyeyb.execute-api.eu-west-1.amazonaws.com"
-           "/parrotfish-prod/search")
-EBS_DETAIL = "https://audiovisual.ec.europa.eu/en/event/"
+# EbS (audiovisual.ec.europa.eu) event-planning — the EC AV service's schedule
+# of upcoming covered events, incl. Commissioners' trips abroad. Served by the
+# same avsportal Solr API as the photo library (type=EVENTPLANNING); the old
+# parrotfish /search endpoint now 404s and silently returned 0 items.
+EBS_TZ = ZoneInfo("Europe/Brussels")   # shootstartdate is Brussels local time
 
 # EU Audiovisual Service photo/video library — his team often doesn't put
 # things on the official agenda, but the EC photographers still cover them and
@@ -639,75 +638,74 @@ def scrape_from_missions() -> list:
 
 # ── Strategy 6: EbS audiovisual event-planning (timed, forward-looking) ─────────
 
-def _ebs_en(entries: list, field: str = "content") -> str:
-    """Pick the English string from an EbS [{language, content/title}] list."""
-    if not entries:
-        return ""
-    chosen = next((e for e in entries if e.get("language") == "EN"), entries[0])
-    raw = chosen.get(field) or chosen.get("title") or chosen.get("content") or ""
-    return html.unescape(re.sub(r"<[^>]+>", "", raw)).strip()
-
-
-def _ebs_dt(iso: str) -> str:
-    """'2026-06-25T07:00:00.000Z' → '20260625T070000Z' (ICS UTC datetime)."""
-    m = re.match(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})", iso or "")
-    return ("".join(m.groups()) + "Z") if m else ""
+def _ebs_parse(raw: str):
+    """'20261026 11:15' (Brussels local) → (date ISO, UTC ICS datetime or '' if 00:00)."""
+    m = re.match(r"(\d{4})(\d{2})(\d{2})(?:\s+(\d{2}):(\d{2}))?", str(raw or ""))
+    if not m:
+        return "", ""
+    y, mo, d, hh, mm = m.groups()
+    day = f"{y}-{mo}-{d}"
+    if not hh or (hh, mm) == ("00", "00"):        # whole-day item (e.g. a trip)
+        return day, ""
+    local = datetime(int(y), int(mo), int(d), int(hh), int(mm), tzinfo=EBS_TZ)
+    return day, local.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 def scrape_from_ebs() -> list:
     """Upcoming events the EC AV service plans to cover, filtered to Séjourné.
 
-    Filters on the tagged `personalities` (lastname) first — reliable, no
-    journalist-style false positives — and falls back to the title text.
+    Matched by his tagged person id first — reliable, no journalist-style false
+    positives — then by his name in title/summary.
     """
-    url = EBS_API + "?" + urllib.parse.urlencode({
-        "mediaType": "EVENTPLANNING", "pageSize": 100,
-    })
     try:
-        req = requests.get(url, headers={**HEADERS, "Accept": "application/json"},
-                           timeout=30)
-        req.raise_for_status()
-        items = req.json().get("items", []) or []
+        resp = requests.get(EUAV_API, params={
+            "wt": "json", "index": 1, "pagesize": 200, "type": "EVENTPLANNING",
+        }, headers={**HEADERS, "Accept": "application/json"}, timeout=30)
+        resp.raise_for_status()
+        docs = resp.json().get("response", {}).get("docs", []) or []
     except (requests.RequestException, ValueError) as e:
         print(f"[EbS] fetch failed: {e}")
         return []
 
     today  = date.today().isoformat()
     events = []
-    for it in items:
-        people = " ".join(
-            f"{p.get('lastname','')} {p.get('title','')}"
-            for p in (it.get("personalities") or [])
-        )
-        title = _ebs_en(it.get("titles"))
-        if not (mentions_sejourne(people) or mentions_sejourne(title)):
+    for doc in docs:
+        title   = _euav_text(doc.get("titles_json"))
+        summary = _euav_text(doc.get("summary_json"))
+        tagged  = any(str(p.get("id", "")) == EUAV_PERSON
+                      for p in (doc.get("pers_json") or []) if isinstance(p, dict))
+        if not (tagged or mentions_sejourne(title + " " + summary)):
             continue
 
-        start_iso = it.get("startDateTime") or ""
-        ev_date   = start_iso[:10]
-        if not re.match(r"\d{4}-\d{2}-\d{2}$", ev_date):
+        ev_date, start_dt = _ebs_parse(doc.get("shootstartdate"))
+        if not ev_date:
             continue
-
+        end_date, end_dt = _ebs_parse(doc.get("shootenddate"))
         location = ", ".join(
-            t for t in (_ebs_en(loc.get("titles")) for loc in (it.get("locations") or []))
+            t for t in (_euav_text(loc.get("value"))
+                        for loc in (doc.get("location_json") or []) if isinstance(loc, dict))
             if t
         )
-        ref = it.get("reference", "")
-        events.append({
-            "title":    title or "EC event",
+        ref = str(doc.get("ref", ""))
+        ev = {
+            "title":    (title or "EC event")[:200],
             "date":     ev_date,
-            "start_dt": _ebs_dt(start_iso),
-            "end_dt":   _ebs_dt(it.get("endDateTime") or ""),
             "location": location,
             "status":   "upcoming" if ev_date > today
                         else "ongoing" if ev_date == today else "past",
             "source":   "ebs",
-            "subject":  "",
-            "url":      (EBS_DETAIL + ref) if ref else "",
-        })
+            "subject":  summary[:300],
+            "url":      (EUAV_PHOTO + ref) if ref else "",
+        }
+        if start_dt:
+            ev["start_dt"] = start_dt
+            ev["end_dt"]   = end_dt or start_dt
+        elif end_date and end_date > ev_date:     # multi-day trip
+            ev["date_end"] = end_date
+        events.append(ev)
 
     print(f"[EbS] {len(events)} planned events tagged Séjourné "
-          f"(of {len(items)} total upcoming).")
+          f"(of {len(docs)} total upcoming).")
     return events
 
 
