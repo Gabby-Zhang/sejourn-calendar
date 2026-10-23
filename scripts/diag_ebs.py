@@ -19,9 +19,9 @@ def show(label, resp, n=1500):
     print(resp.text[:n])
 
 
-def try_get(label, url, **kw):
+def try_get(label, url, n=1500, **kw):
     try:
-        show(label, requests.get(url, headers=H, timeout=30, **kw))
+        show(label, requests.get(url, headers=H, timeout=30, **kw), n)
     except requests.RequestException as e:
         print(f"\n=== {label}\nERROR {e}")
 
@@ -29,16 +29,12 @@ def try_get(label, url, **kw):
 # 1. 现在脚本的原样请求
 try_get("EbS as sync.py calls it", EBS_API,
         params={"mediaType": "EVENTPLANNING", "pageSize": 100})
-# 2. 不带参数 / 其它 mediaType 写法
-try_get("EbS no params", EBS_API)
-for mt in ("EVENT", "EVENTS", "PLANNING", "eventplanning"):
-    try_get(f"EbS mediaType={mt}", EBS_API, params={"mediaType": mt, "pageSize": 5})
-# 3. POST JSON
-try:
-    show("EbS POST json", requests.post(EBS_API, headers=H, timeout=30,
-                                        json={"mediaType": "EVENTPLANNING", "pageSize": 5}))
-except requests.RequestException as e:
-    print("POST error", e)
+# 2. 同一网关下其它可能的路径(旧 /search 已 404)
+base = EBS_API.rsplit("/", 1)[0]
+for path in ("", "/events", "/event", "/planning", "/eventplanning", "/search/events",
+             "/v2/search", "/api/search", "/media/search"):
+    try_get(f"EbS path {path or '/'}", base + path, n=400,
+            params={"mediaType": "EVENTPLANNING", "pageSize": 3})
 
 # 4. 影像库 Solr API(这个是好的)里有没有「计划」类 type
 for t in ("EVENT", "EVENTPLANNING", "PLANNING", "ADVISORY", "LIVE"):
@@ -49,14 +45,18 @@ for t in ("EVENT", "EVENTPLANNING", "PLANNING", "ADVISORY", "LIVE"):
 try:
     home = requests.get("https://audiovisual.ec.europa.eu/en", headers=HEADERS, timeout=30)
     print(f"\n=== SPA home HTTP {home.status_code}, {len(home.text)} bytes")
-    scripts = re.findall(r'src="([^"]+\.js)"', home.text)
+    print(home.text[:3000])
+    scripts = re.findall(r'src="([^"]+\.js[^"]*)"', home.text)
     print("scripts:", scripts)
     found = set()
     for s in scripts:
         url = urllib.parse.urljoin(home.url, s)
         js = requests.get(url, headers=HEADERS, timeout=30).text
-        for m in re.findall(r'https://[a-z0-9.-]*execute-api[^"\'`\s]*', js):
+        print(f"  bundle {s}: {len(js)} bytes")
+        for m in re.findall(r'https://[a-zA-Z0-9.-]+(?:amazonaws\.com|europa\.eu)[^"\'`\s]*', js):
             found.add(m)
+        for m in re.findall(r'.{60}(?:mediaType|parrotfish).{160}', js)[:10]:
+            print(f"[{s}] ...{m}...")
         for m in re.findall(r'.{80}(?:EVENTPLANNING|eventplanning|planning).{120}', js, re.I)[:8]:
             print(f"[{s}] ...{m}...")
     print("execute-api endpoints in bundles:", json.dumps(sorted(found), indent=1))
