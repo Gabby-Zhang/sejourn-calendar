@@ -106,11 +106,25 @@ EUAV_TAG     = "[EU_AV]"     # marker in DESCRIPTION; sa-archive / news monitor 
 # hardcoded 2026 fallback). Skipped in August and on days he already has a
 # known engagement. Regenerated every run (old copies in the ICS are dropped),
 # so a prediction disappears as soon as a real event lands on that day.
+# The convention has exceptions (e.g. Tue 2026-10-27 in Brussels), so real
+# College dates override it week by week: von der Leyen's entries on the
+# aggregate calendar page (forward-looking) and EC photo reportages of the
+# meeting (after the fact). A week with a known College date gets that date,
+# or nothing if it already happened.
 EP_API          = "https://data.europarl.europa.eu/api/v2"
 COLLEGE_TAG     = "[EU_AUTO]"   # sa-archive renders this as 🇪🇺 例会·推测
 COLLEGE_WEEKS   = 6
 COLLEGE_TITLE   = "Weekly College of Commissioners meeting (expected)"
 COLLEGE_URL     = "https://commission.europa.eu/about/organisation/college-commissioners_en"
+COLLEGE_TITLE_DATED = "Weekly College of Commissioners meeting (date per President's agenda)"
+COLLEGE_RE = re.compile(   # not "College of Europe" events
+    r"\b(weekly|hebdomadaire)\b.{0,30}\b(college|collège|von der leyen commission)\b"
+    r"|\bcollege (of commissioners )?meeting"
+    r"|\b(meeting|réunion) (of|du) (the )?(college|collège)\b(?! (of|d.)europe)",
+    re.I,
+)
+# date ISO → (location, source label); filled by scrape_from_website / scrape_from_euav
+COLLEGE_DATES: dict = {}
 _STRASBOURG_MONDAYS_FALLBACK = {   # EP 2026 calendar
     "2026-01-19", "2026-02-09", "2026-03-09", "2026-04-27", "2026-05-18",
     "2026-06-15", "2026-07-06", "2026-09-14", "2026-10-05", "2026-10-19",
@@ -252,8 +266,11 @@ def fetch_page(page: int) -> BeautifulSoup:
     return BeautifulSoup(resp.text, "html.parser")
 
 
-def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple]:
-    """Returns (sejourn_events, all_dates, page_signature) from a page.
+def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple, list]:
+    """Returns (sejourn_events, all_dates, page_signature, college) from a page.
+
+    college lists (date ISO, location) of College meeting entries (usually on
+    von der Leyen's agenda) — used to date the weekly meeting, see COLLEGE_DATES.
 
     page_signature is the tuple of every title on the page — used to detect
     when ?page= isn't actually advancing (the site currently returns the same
@@ -262,6 +279,7 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple]:
     sejourn_events = []
     all_dates = []
     all_titles = []
+    college = []
 
     for article in soup.select("article.ecl-content-item--inline"):
         time_el = article.select_one("time.ecl-content-item__date")
@@ -290,6 +308,10 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple]:
         title = title_el.get_text(strip=True) if title_el else ""
         all_titles.append(title)
 
+        if COLLEGE_RE.search(title):
+            college.append((event_date.isoformat(),
+                            location_el.get_text(strip=True) if location_el else ""))
+
         # Client-side filter: only Séjourné's events.
         if not mentions_sejourne(title):
             continue
@@ -309,7 +331,7 @@ def parse_page(soup: BeautifulSoup) -> tuple[list, list, tuple]:
             "url":      "",
         })
 
-    return sejourn_events, all_dates, tuple(all_titles)
+    return sejourn_events, all_dates, tuple(all_titles), college
 
 
 def scrape_from_website() -> list:
@@ -323,7 +345,7 @@ def scrape_from_website() -> list:
         if page > 0:
             time.sleep(0.8)
         try:
-            sejourn_evs, all_dates, sig = parse_page(fetch_page(page))
+            sejourn_evs, all_dates, sig, college = parse_page(fetch_page(page))
         except requests.RequestException as e:
             print(f"[Calendar] Page {page+1} failed: {e}")
             break
@@ -337,6 +359,11 @@ def scrape_from_website() -> list:
                   f"not advancing, stopping.")
             break
         prev_sig = sig
+
+        for d, loc in college:
+            if d not in COLLEGE_DATES:
+                COLLEGE_DATES[d] = (loc, "agenda")
+                print(f"[Calendar] College meeting on agenda: {d} {loc}".rstrip())
 
         for ev in sejourn_evs:
             k = f"{ev['date']}|{ev['title']}"
@@ -742,6 +769,10 @@ def scrape_from_euav() -> list:
         for doc in docs:
             title   = _euav_text(doc.get("titles_json"))
             summary = _euav_text(doc.get("summary_json"))
+            # Photos of the College meeting (whoever is pictured) date that week's meeting.
+            cm = re.match(r"(\d{4})(\d{2})(\d{2})", str(doc.get("shootstartdate", "")))
+            if cm and media_type != "VIDEO" and COLLEGE_RE.search(title):
+                COLLEGE_DATES.setdefault("-".join(cm.groups()), ("", "photos"))
             tagged  = any(str(p.get("id", "")) == EUAV_PERSON
                           for p in (doc.get("pers_json") or []) if isinstance(p, dict))
             if not (tagged or mentions_sejourne(title + " " + summary)):
@@ -820,11 +851,23 @@ def predict_college_meetings(known: list) -> list:
             meet, loc = wk_mon + timedelta(days=1), "Strasbourg"
         else:
             meet, loc = wk_mon + timedelta(days=2), "Brussels (Berlaymont)"
+        title = COLLEGE_TITLE
+        # A known College date this week (agenda or photos) beats the convention.
+        week = [d for d in COLLEGE_DATES
+                if wk_mon.isoformat() <= d < (wk_mon + timedelta(days=7)).isoformat()]
+        if week:
+            d0 = min(week)
+            if d0 != meet.isoformat():
+                print(f"[College] week of {wk_mon}: meeting on {d0} "
+                      f"({COLLEGE_DATES[d0][1]}), not {meet}.")
+            meet  = date.fromisoformat(d0)
+            loc   = COLLEGE_DATES[d0][0] or loc
+            title = COLLEGE_TITLE_DATED
         d = meet.isoformat()
         if meet < today or meet.month == 8 or d in busy:
             continue
         out.append({
-            "title":    COLLEGE_TITLE,
+            "title":    title,
             "date":     d,
             "location": loc,
             "status":   "ongoing" if meet == today else "upcoming",
