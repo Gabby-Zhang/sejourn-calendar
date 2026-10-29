@@ -1,0 +1,36 @@
+name: Telegram failure alerts
+
+# 本仓库任一 workflow 失败 → sa-archive 的 Telegram 机器人推一条「⚠️ xxx 失败」+ run 链接,
+# 日历同步(每小时)挂了能马上知道,不用等到 Agenda/行程日历空了才发现。
+# 需要两个 secret:TELEGRAM_BOT_TOKEN(机器人 token)、TELEGRAM_CHAT_ID(管理员的 Telegram 用户 ID)。
+# 新增 workflow 时把它的 name 加进下面的列表(workflow_run 只认名字)。
+
+on:
+  workflow_run:
+    workflows:
+      - "Sync Séjourné Calendar"
+    types: [completed]
+
+jobs:
+  alert:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Telegram alert
+        env:
+          TOKEN:   ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT:    ${{ secrets.TELEGRAM_CHAT_ID }}
+          NAME:    ${{ github.event.workflow_run.name }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request
+          text = f"⚠️ sejourn-calendar · {os.environ['NAME']} 失败\n{os.environ['RUN_URL']}"
+          for chat in os.environ["CHAT"].split(","):
+              req = urllib.request.Request(
+                  f"https://api.telegram.org/bot{os.environ['TOKEN']}/sendMessage",
+                  data=json.dumps({"chat_id": chat.strip(), "text": text,
+                                   "link_preview_options": {"is_disabled": True}}).encode(),
+                  headers={"Content-Type": "application/json"})
+              urllib.request.urlopen(req, timeout=30).close()
+          PY
