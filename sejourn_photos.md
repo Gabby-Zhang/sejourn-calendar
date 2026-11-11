@@ -1,12 +1,9 @@
 # Séjourné — EU Audiovisual Media
 
-_Last updated: 2026-11-11 · 59 item(s) logged_
+_Last updated: 2026-10-30 · 56 item(s) logged_
 
 | Date | Type | Title | Link |
 |------|------|-------|------|
-| 2026-11-11 | 📷 | Weekly college meeting of the von der Leyen Commission, 11/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070940) |
-| 2026-11-11 | 📷 | Weekly college meeting of the von der Leyen Commission, 11/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070940) |
-| 2026-11-11 | 📷 | Weekly college meeting of the von der Leyen Commission, 11/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070940) |
 | 2026-10-29 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to Canada | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070839) |
 | 2026-10-29 | 📷 | Participation of Ursula von der Leyen, President of the European Commission, in the EU - Canada Summit, in Montreal | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070845) |
 | 2026-10-29 | 📷 | Visit of Stéphane Séjourné, Executive Vice-President of the European Commission, to Canada | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-070839) |
