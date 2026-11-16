@@ -495,7 +495,10 @@ def scrape_from_ics() -> list:
             event_date = f"{dtstart[:4]}-{dtstart[4:6]}-{dtstart[6:8]}"
         else:
             continue
-        if not summary or not mentions_sejourne(summary):
+        # Photo-library entries are matched by his person tag, so their titles
+        # often lack his name ("Visit of Sergii Koretskyi…") — keep them anyway,
+        # or they vanish once they scroll out of the live API window.
+        if not summary or not (mentions_sejourne(summary) or EUAV_TAG in desc):
             continue
 
         status = ("upcoming" if event_date > today
@@ -746,17 +749,31 @@ def _euav_text(field) -> str:
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html.unescape(str(raw)))).strip()
 
 
+def _euav_ymd(raw) -> str:
+    m = re.match(r"(\d{4})(\d{2})(\d{2})", str(raw or ""))
+    return "-".join(m.groups()) if m else ""
+
+
 def scrape_from_euav() -> list:
     """Activities captured by EC photographers/camera crews (REPORTAGE/PHOTO/VIDEO).
 
     Matched by his tagged person id OR his name in title/summary. One event per
     reportage/video (PHOTO items collapse onto their parent reportage ref).
+
+    Dating: a reportage's shootstartdate..shootenddate is the photographer's
+    booking window, not the day of the activity — e.g. the Koretskyi visit
+    (P-070979) was booked 15 Nov 14:30 → 16 Nov 16:15 but happened on the 16th;
+    the Stubb visit the other way round. Each PHOTO carries its real `shootdate`,
+    so a reportage is dated from its photos (those showing him first, then any),
+    and shootstartdate is only the fallback. Such events get `date_from_photos`
+    so collect_all_events lets them replace an older ICS copy of the same link.
     """
     by_ref = {}
+    photo_dates = {}   # reportage ref → {"him": set(dates), "all": set(dates)}
     for media_type in ("REPORTAGE", "PHOTO", "VIDEO"):
         try:
             resp = requests.get(EUAV_API, params={
-                "fl": "type,ref,doc_ref,titles_json,summary_json,shootstartdate,pers_json",
+                "fl": "type,ref,doc_ref,titles_json,summary_json,shootstartdate,shootdate,pers_json",
                 "hasMedia": 1, "wt": "json", "index": 1,
                 "pagesize": 100, "type": media_type,
             }, headers=HEADERS, timeout=30)
@@ -769,23 +786,30 @@ def scrape_from_euav() -> list:
         for doc in docs:
             title   = _euav_text(doc.get("titles_json"))
             summary = _euav_text(doc.get("summary_json"))
+            ref = doc.get("doc_ref") or str(doc.get("ref", "")).split("/")[0]
+            shot = _euav_ymd(doc.get("shootdate")) if media_type == "PHOTO" else ""
+            if shot and ref:
+                # Every photo dates its reportage, even ones not showing him
+                # (captions like "Sergii Koretskyi" alone).
+                d = photo_dates.setdefault(ref, {"him": set(), "all": set()})
+                d["all"].add(shot)
+                if mentions_sejourne(summary):
+                    d["him"].add(shot)
+            day = shot or _euav_ymd(doc.get("shootstartdate"))
             # Photos of the College meeting (whoever is pictured) date that week's meeting.
-            cm = re.match(r"(\d{4})(\d{2})(\d{2})", str(doc.get("shootstartdate", "")))
-            if cm and media_type != "VIDEO" and COLLEGE_RE.search(title):
-                COLLEGE_DATES.setdefault("-".join(cm.groups()), ("", "photos"))
+            if day and media_type != "VIDEO" and COLLEGE_RE.search(title):
+                COLLEGE_DATES.setdefault(day, ("", "photos"))
             tagged  = any(str(p.get("id", "")) == EUAV_PERSON
                           for p in (doc.get("pers_json") or []) if isinstance(p, dict))
             if not (tagged or mentions_sejourne(title + " " + summary)):
                 continue
-            m = re.match(r"(\d{4})(\d{2})(\d{2})", str(doc.get("shootstartdate", "")))
-            if not m or not title:
+            if not day or not title:
                 continue
-            ref = doc.get("doc_ref") or str(doc.get("ref", "")).split("/")[0]
             if not ref or ref in by_ref:
                 continue
             by_ref[ref] = {
                 "title":    title[:200],
-                "date":     "-".join(m.groups()),
+                "date":     day,
                 "location": "",
                 "status":   "past",
                 "source":   "euav",
@@ -795,7 +819,16 @@ def scrape_from_euav() -> list:
 
     today  = date.today().isoformat()
     events = []
-    for ev in by_ref.values():
+    for ref, ev in by_ref.items():
+        d = photo_dates.get(ref)
+        dates = sorted((d["him"] or d["all"]) if d else ())
+        if dates:
+            if dates[0] != ev["date"]:
+                print(f"[EU AV] {ref}: dated {dates[0]} from photos (booking said {ev['date']})")
+            ev["date"] = dates[0]
+            if dates[-1] != dates[0]:
+                ev["date_end"] = dates[-1]
+            ev["date_from_photos"] = True
         if ev["date"] >= today:
             ev["status"] = "ongoing" if ev["date"] == today else "upcoming"
         events.append(ev)
@@ -1198,6 +1231,28 @@ def collect_all_events() -> list:
         ics_events = [e for e in ics_events
                       if EP_MAYBE_TAG not in e.get("ics_desc", "")
                       and COUNCIL_TAG not in e.get("ics_desc", "")]
+
+    # Photo-library events are keyed by their link, not (date, title): a
+    # reportage first seen with its booking date gets re-dated once its photos
+    # show the real day. Photo-dated live copies replace the stored ICS copy;
+    # otherwise (photos scrolled out of the API window) the stored date stays.
+    def _euav_link(e):
+        if e.get("source") == "euav":
+            return e.get("url", "")
+        if EUAV_TAG in e.get("ics_desc", ""):
+            m = re.search(r"https://audiovisual\.ec\.europa\.eu/\S+?/(?:photo|video)/[A-Z]-\d+",
+                          (e.get("url") or "") + " " + e.get("ics_desc", ""))
+            return m.group(0) if m else ""
+        return ""
+    stored = {_euav_link(e): e for e in ics_events if _euav_link(e)}
+    redated = {e["url"] for e in euav_events if e.get("date_from_photos")}
+    for e in euav_events:
+        old_copy = stored.get(e["url"])
+        if old_copy and e["url"] in redated and old_copy["date"] != e["date"]:
+            print(f"[EU AV] re-date {old_copy['date']} → {e['date']}: {e['title'][:60]}")
+    ics_events  = [e for e in ics_events if _euav_link(e) not in redated]
+    euav_events = [e for e in euav_events
+                   if e["url"] in redated or e["url"] not in stored]
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
     # so that subject/url/source fields stay populated. EbS comes before the ICS
