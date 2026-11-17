@@ -82,11 +82,16 @@ MISSIONS_EXPORT = (
     "/data/missions/commissioners/export?hostId="
 )
 
-# EbS (audiovisual.ec.europa.eu) event-planning — the EC AV service's schedule
-# of upcoming covered events, incl. Commissioners' trips abroad. Served by the
-# same avsportal Solr API as the photo library (type=EVENTPLANNING); the old
+# EC Audiovisual Service event-planning (audiovisual.ec.europa.eu) — the AV
+# service's schedule of upcoming PHOTO assignments (refs "P-…", newsphoto=Y),
+# incl. Commissioners' trips abroad. Not the EbS TV/livestream schedule: an
+# item here usually has no EbS broadcast. Source key stays "ebs" for history.
+# Served by the same avsportal Solr API as the photo library (type=EVENTPLANNING); the old
 # parrotfish /search endpoint now 404s and silently returned 0 items.
 EBS_TZ = ZoneInfo("Europe/Brussels")   # shootstartdate is Brussels local time
+EBS_SOURCE = ("Source: EC Audiovisual Service — photo coverage plan (not an EbS "
+              "broadcast); photos appear at the link after the event")
+EBS_OLD_SOURCE = "Source: EC Audiovisual (EbS) — planned coverage"
 
 # EU Audiovisual Service photo/video library — his team often doesn't put
 # things on the official agenda, but the EC photographers still cover them and
@@ -240,7 +245,7 @@ SOURCE_BADGE = {
     "ics":          "🏛",
     "press":        "🎤",
     "mission":      "✈️",
-    "ebs":          "📺",
+    "ebs":          "📷",
     "euav":         "📷",
     "college":      "🇪🇺",
     "ep":           "🏛️",
@@ -483,7 +488,7 @@ def scrape_from_ics() -> list:
                 summary = line[8:].replace("\\,", ",").replace("\\n", "\n").strip()
             elif line.startswith("DTSTART;VALUE=DATE:"):
                 dtstart = line[19:].strip()
-            elif line.startswith("DTSTART:"):            # timed (EbS) event
+            elif line.startswith("DTSTART:"):            # timed (photo-plan) event
                 start_dt = line[8:].strip()
             elif line.startswith("DTEND:"):
                 end_dt = line[6:].strip()
@@ -493,6 +498,7 @@ def scrape_from_ics() -> list:
                 location = line[9:].replace("\\,", ",").strip()
             elif line.startswith("DESCRIPTION:") and not desc:
                 desc = line[12:].strip()      # first one = event's, not an alarm's
+                desc = desc.replace(EBS_OLD_SOURCE, EBS_SOURCE)   # pre-rename copies
             elif line.startswith("URL:"):
                 url = line[4:].strip()
 
@@ -671,7 +677,7 @@ def scrape_from_missions() -> list:
     return events
 
 
-# ── Strategy 6: EbS audiovisual event-planning (timed, forward-looking) ─────────
+# ── Strategy 6: EC AV photo-coverage plan (timed, forward-looking) ─────────────
 
 def _ebs_parse(raw: str):
     """'20261026 11:15' (Brussels local) → (date ISO, UTC ICS datetime or '' if 00:00)."""
@@ -699,7 +705,7 @@ def scrape_from_ebs() -> list:
         resp.raise_for_status()
         docs = resp.json().get("response", {}).get("docs", []) or []
     except (requests.RequestException, ValueError) as e:
-        print(f"[EbS] fetch failed: {e}")
+        print(f"[AV plan] fetch failed: {e}")
         return []
 
     today  = date.today().isoformat()
@@ -739,7 +745,7 @@ def scrape_from_ebs() -> list:
             ev["date_end"] = end_date
         events.append(ev)
 
-    print(f"[EbS] {len(events)} planned events tagged Séjourné "
+    print(f"[AV plan] {len(events)} planned photo assignments tagged Séjourné "
           f"(of {len(docs)} total upcoming).")
     return events
 
@@ -1321,7 +1327,7 @@ def collect_all_events() -> list:
                       and COUNCIL_TAG not in e.get("ics_desc", "")]
 
     # Merge, deduplicate by (date, title). Live sources win over the ICS copy
-    # so that subject/url/source fields stay populated. EbS comes before the ICS
+    # so that subject/url/source fields stay populated. The AV photo plan comes before the ICS
     # copy so its precise start/end times survive the merge.
     merged = {}
     for ev in (web_events + reg_events + press_events + mission_events
@@ -1359,7 +1365,7 @@ def generate_ics(events: list) -> str:
     for ev in events:
         dt    = ev["date"].replace("-", "")
         # Three event shapes:
-        #   • timed (EbS): start_dt/end_dt are UTC datetimes → DTSTART/DTEND with time
+        #   • timed (AV photo plan / official page): start_dt/end_dt are UTC datetimes → DTSTART/DTEND with time
         #   • multi-day all-day (missions): inclusive date_end → exclusive DTEND +1 day
         #   • single-day all-day (default): DTEND = DTSTART
         timed = bool(ev.get("start_dt"))
@@ -1394,7 +1400,7 @@ def generate_ics(events: list) -> str:
         elif ev.get("source") == "press":
             desc_parts.append("Source: EC Presscorner")
         elif ev.get("source") == "ebs":
-            desc_parts.append("Source: EC Audiovisual (EbS) — planned coverage")
+            desc_parts.append(EBS_SOURCE)
         elif ev.get("source") == "euav":
             desc_parts.append(f"{EUAV_TAG} Source: EC Audiovisual photo/video library")
         elif ev.get("source") == "ep":
@@ -1540,7 +1546,7 @@ def push_notification(new_events: list):
     if n_trip:
         bits.append(f"{n_trip} mission{'s' if n_trip != 1 else ''}")
     if n_ebs:
-        bits.append(f"{n_ebs} scheduled")
+        bits.append(f"{n_ebs} photo-planned")
     if n_photo:
         bits.append(f"{n_photo} seen in EC photos")
     if n_coll:
