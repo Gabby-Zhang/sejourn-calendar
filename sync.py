@@ -99,6 +99,13 @@ EUAV_VIDEO   = "https://audiovisual.ec.europa.eu/en/media/video/"
 EUAV_PERSON  = "241448"      # EU AV person id for Stéphane Séjourné (pers_json)
 EUAV_TAG     = "[EU_AV]"     # marker in DESCRIPTION; sa-archive / news monitor read it
 
+# DG GROW (his DG) public events listing. Event titles rarely name him ("High-Level
+# Implementation Dialogue on SMEs…"), so each detail page is opened and matched
+# on its body text. Used to attach the official name + page to the entry another
+# source already found (e.g. the AV photo plan), or added on its own otherwise.
+GROW_BASE    = "https://single-market-economy.ec.europa.eu"
+GROW_EVENTS  = GROW_BASE + "/events_en"
+
 # Weekly College meeting — his own calendar is rarely updated, so we assume he
 # attends every College meeting (the user's explicit choice) and put it on the
 # calendar ahead of time. Convention: Wednesday in Brussels; Tuesday in
@@ -239,6 +246,7 @@ SOURCE_BADGE = {
     "ep":           "🏛️",
     "council":      "🇪🇺",
     "known":        "📌",
+    "official":     "🔗",
 }
 
 
@@ -1085,6 +1093,118 @@ def scrape_from_supabase() -> list:
     return events
 
 
+# ── Strategy 12: official DG GROW event pages ───────────────────────────────────
+
+_GROW_WHEN = re.compile(
+    r"(\d{1,2})\s+([A-Z][a-z]+)\s+(\d{4})(?:,\s*(\d{1,2}):(\d{2})"
+    r"(?:\s*-\s*(\d{1,2}):(\d{2}))?)?")
+
+
+def _grow_dt(day: str, hh, mm) -> str:
+    local = datetime.strptime(f"{day} {hh}:{mm}", "%Y-%m-%d %H:%M").replace(tzinfo=EBS_TZ)
+    return local.astimezone(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def _grow_dd(soup: BeautifulSoup, term: str) -> str:
+    for dt in soup.select("dt.ecl-description-list__term"):
+        if dt.get_text(strip=True) == term:
+            dd = dt.find_next_sibling("dd")
+            if dd:
+                return ", ".join(dd.stripped_strings)
+    return ""
+
+
+def scrape_from_grow_events() -> list:
+    """Upcoming DG GROW events whose page says Séjourné takes part."""
+    try:
+        resp = requests.get(GROW_EVENTS, headers=HEADERS, timeout=30)
+        resp.raise_for_status()
+    except requests.RequestException as e:
+        print(f"[GROW] listing fetch failed: {e}")
+        return []
+
+    links = []
+    for a in BeautifulSoup(resp.text, "html.parser").select(
+            "article .ecl-content-block__title a[href*='/events/']"):
+        href = urllib.parse.urljoin(GROW_BASE, a["href"])
+        if href not in links:
+            links.append(href)
+
+    today, events = date.today().isoformat(), []
+    for url in links:
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=30)
+            r.raise_for_status()
+        except requests.RequestException as e:
+            print(f"[GROW] {url} fetch failed: {e}")
+            continue
+        soup = BeautifulSoup(r.text, "html.parser")
+        main = soup.find("main") or soup
+        body = main.get_text(" ", strip=True)
+        if not mentions_sejourne(body):
+            continue
+
+        h1    = main.find("h1") or soup.find("h1")    # page header sits outside <main>
+        title = h1.get_text(" ", strip=True) if h1 else ""
+        when  = _grow_dd(main, "When")
+        m     = _GROW_WHEN.search(when)
+        slug  = re.search(r"-(\d{4}-\d{2}-\d{2})_[a-z]{2}$", url)
+        if m and m.group(2)[:3] in MONTH_MAP:
+            ev_date = f"{m.group(3)}-{MONTH_MAP[m.group(2)[:3]]:02d}-{int(m.group(1)):02d}"
+        elif slug:
+            ev_date = slug.group(1)
+        else:
+            continue
+        sentence = next((s for s in re.split(r"(?<=\.)\s+", body)
+                         if mentions_sejourne(s)), "")
+        title = title or "DG GROW event"
+        ev = {
+            # Prefixed so the ICS history reader (which keeps only titles naming
+            # him) still finds a standalone entry once the page leaves the listing.
+            "title":    f"Séjourné — {title}"[:200],
+            "official_title": title,
+            "date":     ev_date,
+            "location": _grow_dd(main, "Where"),
+            "status":   "upcoming" if ev_date > today
+                        else "ongoing" if ev_date == today else "past",
+            "source":   "official",
+            "subject":  sentence[:300],
+            "url":      url,
+        }
+        if m and m.group(4):
+            ev["start_dt"] = _grow_dt(ev_date, m.group(4), m.group(5))
+            ev["end_dt"]   = (_grow_dt(ev_date, m.group(6), m.group(7))
+                              if m.group(6) else ev["start_dt"])
+        events.append(ev)
+
+    print(f"[GROW] {len(events)} official events naming Séjourné "
+          f"(of {len(links)} listed).")
+    return events
+
+
+def attach_official_pages(events: list, official: list) -> list:
+    """Hang each official page on the entry another source already has for the
+    same activity (same day and same start time, or ≥2 shared distinctive title
+    words); keep that entry's title so its UID / ICS history don't churn. An
+    official event with no such match is added as its own entry."""
+    extra = []
+    for off in official:
+        # Last run's copy of a standalone official entry: the live one replaces it.
+        events = [e for e in events
+                  if not (e["date"] == off["date"] and e["title"] == off["title"])]
+        toks = _title_tokens(off["official_title"])
+        match = [e for e in events if e["date"] == off["date"] and (
+                 (off.get("start_dt") and e.get("start_dt") == off["start_dt"])
+                 or len(toks & _title_tokens(e["title"])) >= 2)]
+        for e in match:
+            e["official_title"] = off["official_title"]
+            e["official_url"]   = off["url"]
+            print(f"[GROW] official page → {e['date']} {e['title'][:60]}")
+        if not match:
+            extra.append({k: v for k, v in off.items() if k != "official_title"})
+    return events + extra
+
+
 # ── Cross-source dedup ──────────────────────────────────────────────────────────
 
 # Transparency events are titled "Séjourné meets <org>"; the aggregate agenda
@@ -1187,6 +1307,7 @@ def collect_all_events() -> list:
     ebs_events     = scrape_from_ebs()
     euav_events    = scrape_from_euav()
     known_events   = scrape_from_supabase()
+    grow_events    = scrape_from_grow_events()
     global SLOW_SCAN_RAN
     SLOW_SCAN_RAN  = _slow_scan_due()
     slow_events    = (scrape_from_ep_committees() + scrape_from_council()) if SLOW_SCAN_RAN else []
@@ -1211,6 +1332,7 @@ def collect_all_events() -> list:
 
     out = drop_transparency_duplicates(list(merged.values()))
     out = drop_euav_duplicates(out)
+    out = attach_official_pages(out, grow_events)
     # Predictions are regenerated each run: drop last run's copies first.
     out = [e for e in out if COLLEGE_TAG not in e.get("ics_desc", "")]
     out += predict_college_meetings(out)
@@ -1283,11 +1405,21 @@ def generate_ics(events: list) -> str:
             desc_parts.append("Source: sa-archive schedule (Playbook / manual / news)")
         elif ev.get("source") == "college":
             desc_parts.append(f"{COLLEGE_TAG} Expected — not on his official calendar")
+        elif ev.get("source") == "official":
+            desc_parts.append("Source: DG GROW official event page")
         if ev.get("url"):
             desc_parts.append(ev["url"])
-        description = "\\n".join(p.replace(",", "\\,") for p in desc_parts)
+        official = []
+        if ev.get("official_url"):
+            official = [f"Official title: {ev['official_title']}",
+                        f"Official page: {ev['official_url']}"]
+        description = "\\n".join(p.replace(",", "\\,") for p in official + desc_parts)
         if ev.get("source") == "ics" and ev.get("ics_desc"):
             description = ev["ics_desc"]
+            if official and ev["official_url"] not in description:
+                description = "\\n".join(
+                    [p.replace(",", "\\,") for p in official] + [description])
+        url = ev.get("official_url") or ev.get("url")
 
         lines += [
             "BEGIN:VEVENT",
@@ -1300,8 +1432,8 @@ def generate_ics(events: list) -> str:
         ]
         if description:
             lines.append(f"DESCRIPTION:{description}")
-        if ev.get("url"):
-            lines.append(f"URL:{ev['url']}")
+        if url:
+            lines.append(f"URL:{url}")
         lines.append("STATUS:CONFIRMED")
 
         if ev["status"] in ("upcoming", "ongoing"):
