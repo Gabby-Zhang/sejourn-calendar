@@ -1,9 +1,15 @@
 # Séjourné — EU Audiovisual Media
 
-_Last updated: 2026-11-17 · 75 item(s) logged_
+_Last updated: 2026-11-18 · 81 item(s) logged_
 
 | Date | Type | Title | Link |
 |------|------|-------|------|
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
+| 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
 | 2026-11-17 | 📷 | Participation of Stéphane Séjourné, Executive Vice-President of the European Commission, in the SME's Implementation dialogue | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071013) |
 | 2026-11-17 | 📷 | Participation of Stéphane Séjourné, Executive Vice-President of the European Commission, in the SME's Implementation dialogue | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071013) |
 | 2026-11-17 | 📷 | Participation of Stéphane Séjourné, Executive Vice-President of the European Commission, in the SME's Implementation dialogue | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071013) |
