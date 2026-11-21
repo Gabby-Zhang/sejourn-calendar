@@ -168,6 +168,41 @@ COUNCIL_LOOKAHEAD_DAYS = 120
 SUPABASE_URL      = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SUPABASE_KEY      = os.environ.get("SUPABASE_KEY", "")
 SS_PERSON         = "Stéphane Séjourné"
+
+# Corrections for sa-archive rows whose title/link came out wrong (the news
+# monitor writes them there; this repo only reads). Matched by a substring of
+# the row's source_url, applied before the event enters the calendar. Keep
+# "Séjourné" in the title so the ICS copy survives once the row leaves the
+# Supabase window (scrape_from_ics only keeps entries that name him).
+KNOWN_OVERRIDES = [
+    {   # Party press release by Fiorella Zabatta (AVS/Europa Verde); he only
+        # opened the Greens/EFA party leaders' meeting — not a committee
+        # session. europaverde.it carries the same text and loads reliably.
+        "match":    "zabatta-avs-al-parlamento-europeo-unagenda-verde-credibile",
+        "title":    "Séjourné: exchange of views with Greens/EFA party leaders at the "
+                    "European Parliament (reindustrialisation, circular economy, competitiveness)",
+        "location": "European Parliament, Brussels",
+        "note":     "Europa Verde/AVS press release · he opened the meeting",
+        "url":      "https://europaverde.it/2026/11/20/zabatta-avs-al-parlamento-europeo-"
+                    "unagenda-verde-credibile-parte-da-caro-vita-e-lavoro/",
+    },
+]
+
+
+def _apply_known_override(row: dict) -> dict:
+    src = row.get("source_url") or ""
+    for o in KNOWN_OVERRIDES:
+        if o["match"] in src:
+            row = dict(row)
+            row["title"] = o.get("title", row.get("title"))
+            row["location"] = o.get("location", row.get("location"))
+            row["source_url"] = o.get("url", src)
+            if o.get("note"):
+                # Keep the [NEWS_AUTO]/[MANUAL] tag sa-archive set, swap the rest.
+                tag = re.match(r"\s*(\[[A-Z_]+\])", row.get("description") or "")
+                row["description"] = (tag.group(1) + " " if tag else "") + o["note"]
+            return row
+    return row
 _FR_NUM = {"deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7,
            "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
 
@@ -1100,6 +1135,7 @@ def scrape_from_supabase() -> list:
         return []
     today, events = date.today().isoformat(), []
     for row in rows:
+        row = _apply_known_override(row)
         d, title = str(row.get("event_date") or "")[:10], (row.get("title") or "").strip()
         if not re.match(r"\d{4}-\d{2}-\d{2}$", d) or not title:
             continue
