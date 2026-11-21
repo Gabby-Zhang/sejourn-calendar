@@ -145,14 +145,14 @@ URL:https://newsroom.consilium.europa.eu/events/20261120-eu-uk-summit
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
-UID:2026-11-20-de53bed2ef@sejourn-eu
+UID:2026-11-20-b7e1ecc5cd@sejourn-eu
 DTSTAMP:20261121T194550Z
 DTSTART;VALUE=DATE:20261120
 DTEND;VALUE=DATE:20261120
-SUMMARY:Exchange of views with MEPs at the European Parliament on prosperity and industrial strategy
-LOCATION:
-DESCRIPTION:Known engagement ([NEWS_AUTO] via news monitor · verdisinistra.it)\nSource: sa-archive schedule (Playbook / manual / news)\nhttps://verdisinistra.it/zabatta-avs-al-parlamento-europeo-unagenda-verde-credibile-parte-da-caro-vita-e-lavoro/
-URL:https://verdisinistra.it/zabatta-avs-al-parlamento-europeo-unagenda-verde-credibile-parte-da-caro-vita-e-lavoro/
+SUMMARY:Séjourné: exchange of views with Greens/EFA party leaders at the European Parliament (reindustrialisation\, circular economy\, competitiveness)
+LOCATION:European Parliament\, Brussels
+DESCRIPTION:Known engagement ([NEWS_AUTO] Europa Verde/AVS press release · he opened the meeting)\nSource: sa-archive schedule (Playbook / manual / news)\nhttps://europaverde.it/2026/11/20/zabatta-avs-al-parlamento-europeo-unagenda-verde-credibile-parte-da-caro-vita-e-lavoro/
+URL:https://europaverde.it/2026/11/20/zabatta-avs-al-parlamento-europeo-unagenda-verde-credibile-parte-da-caro-vita-e-lavoro/
 STATUS:CONFIRMED
 END:VEVENT
 BEGIN:VEVENT
