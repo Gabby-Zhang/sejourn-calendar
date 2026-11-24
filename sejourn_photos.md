@@ -1,9 +1,10 @@
 # Séjourné — EU Audiovisual Media
 
-_Last updated: 2026-11-18 · 81 item(s) logged_
+_Last updated: 2026-11-24 · 82 item(s) logged_
 
 | Date | Type | Title | Link |
 |------|------|-------|------|
+| 2026-11-24 | 📷 | Weekly College meeting of the von der Leyen Commission, 24/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071087) |
 | 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
 | 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
 | 2026-11-18 | 📷 | Weekly college meeting of the von der Leyen Commission, 18/11/2026 | [View](https://audiovisual.ec.europa.eu/en/media/photo/P-071033) |
